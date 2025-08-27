@@ -73,3 +73,24 @@ crashlytics-build.properties
 # Temporary auto-generated Android Assets
 /[Aa]ssets/[Ss]treamingAssets/aa.meta
 /[Aa]ssets/[Ss]treamingAssets/aa/*
+
+# MacOS generated files
+*.DS_Store
+
+# TGA
+*.env
+*.env.*
+
+# Developer Customs.
+.idea
+.vscode/
+mono_crash*.json
+
+
+# Local Tests and Development
+Assets/Local/Console*
+Assets/Plugins/Sirenix*
+ServerData/*
+Assets/Analyzer/*
+[Cc]CDBuildData
+Tools/**/package-lock.json
