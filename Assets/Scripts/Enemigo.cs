@@ -13,11 +13,36 @@ public class Enemigo : MonoBehaviour
     [SerializeField] public AudioClip sonidoMuerte;
     private SpriteRenderer spriteRenderer;
     private bool puedeAtacar = true;
-    
-    
+    private bool mirandoDerecha = false;
+    public Animator animator;
+    public new Rigidbody2D rigidbody;
+    // Parametros de movimiento
+
     void Start()
     {
         spriteRenderer = GetComponent<SpriteRenderer>();
+        animator = GetComponent<Animator>();
+        rigidbody = GetComponent<Rigidbody2D>();
+    }
+    void Update()
+    {
+        if (rigidbody.velocity.x != 0)
+        {
+            animator.SetBool("isRunningRigth", false);
+        }
+        else
+        {
+            animator.SetBool("isRunningRigth", true);
+            GestionarMovimiento(rigidbody.velocity.x);
+        }
+    }
+    private void GestionarMovimiento(float inputMovimiento)
+    {
+        if ((mirandoDerecha && inputMovimiento < 0) || (!mirandoDerecha && inputMovimiento > 0))
+        {
+            mirandoDerecha = !mirandoDerecha;
+            transform.localScale = new Vector2(-transform.localScale.x, transform.localScale.y);
+        }
     }
     private void OnCollisionEnter2D(Collision2D other)
     {
@@ -36,17 +61,17 @@ public class Enemigo : MonoBehaviour
 
 
             // Jugador una vida
-            GameManager.Instance.PerderVida();
+            other.gameObject.GetComponent<CharacterController>().PerderVidaPJ();
 
             // Aplicamos golpe al personaje
             other.gameObject.GetComponent<CharacterController>().AplicarGolpe();
             AudioManager.Instance.ReproducirSonido(sonidoDano);
 
-            RecibirDano(other.gameObject.GetComponent<CharacterController>().ataque);
+            RecibirDanoFoe(other.gameObject.GetComponent<CharacterController>().ataque);
             Invoke("ReactivarAtaque", cooldownAtaque);
         }
     }
-    private void RecibirDano(float ataqueRecibido)
+    public void RecibirDanoFoe(float ataqueRecibido)
     {
         vida -= ataqueRecibido;
         if (vida <= 0)

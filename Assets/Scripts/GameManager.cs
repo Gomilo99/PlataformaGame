@@ -7,7 +7,7 @@ public class GameManager : MonoBehaviour
 {
     public HUD hud;
     public static GameManager Instance { get; private set; }
-    public int PuntosTotales { get; private set; }
+    public CharacterController player;
     public int vidas = 3;
 
     void Awake()
@@ -21,27 +21,22 @@ public class GameManager : MonoBehaviour
             Debug.Log("Más de un Game Manager en escena!");
         }
     }
-    public void SumarPuntos(int punstosASumar)
-    {
-        PuntosTotales += punstosASumar;
-        hud.ActualizarPuntos(PuntosTotales);
-        Debug.Log("puntosTotales");
-    }
     public void PerderVida()
     {
         vidas -= 1;
+        player.PerderVidaPJ();
         if (vidas == 0)
         {
             //Reiniciar Nivel
             SceneManager.LoadScene(0);
         }
-        hud.DesactivarVida(vidas);
+        EventBus<int>.Publish(GameEvent.VidaPerdida, vidas);
     }
     public bool GanarVida()
     {
         if (vidas == 3) return false;
 
-        hud.ActivarVida(vidas);
+        EventBus<int>.Publish(GameEvent.VidaGanada, vidas);
         vidas += 1;
         return true;
     }

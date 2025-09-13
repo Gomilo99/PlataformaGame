@@ -1,36 +1,66 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Transactions;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class CharacterController : MonoBehaviour
-{
-    [Header("Parameters")]
+{ 
+    // Animator params (optimizados con hash)
+    private static readonly int isJumpingId = Animator.StringToHash("IsJumping");
+    private static readonly int isAttackedId = Animator.StringToHash("isAttacked");
+    private static readonly int isRunningId = Animator.StringToHash("isRunning");
+    private static readonly int isAttackingId    = Animator.StringToHash("isAttacking");
+
+    [Header("Moving Parameters")]
     [SerializeField] public float velocidad = 5;
+    [SerializeField] public bool mirandoDerecha = true;
+
+    [Header("Jumping Parameters")]
     [SerializeField] public float fuerzaSalto = 5;
     [SerializeField] public int saltosMax;
-    [SerializeField] public LayerMask capaSuelo;
-    [SerializeField] public AudioClip audioSalto;
+
+    [Header("Hit Parameters")]
     [SerializeField] public float fuerzaGolpe;
     [SerializeField] public float ataque = 1;
+
+    [Header("Object References")]
+    [SerializeField] public Weapon2D muzzle;
+    [SerializeField] public LayerMask capaSuelo;
+    [SerializeField] public AudioClip audioSalto;
+
     private Animator animator;
     private int saltosRestantes;
     private new Rigidbody2D rigidbody;
     private BoxCollider2D boxCollider;
-    private bool mirandoDerecha = true;
+    
     private bool puedeMoverse = true;
+
+    [SerializeField] private int vidas;
+
     private void Start()
     {
         rigidbody = GetComponent<Rigidbody2D>();
         boxCollider = GetComponent<BoxCollider2D>();
         saltosRestantes = saltosMax;
         animator = GetComponent<Animator>();
+
     }
     // Update is called once per frame
     void Update()
     {
         ProcesarMovimiento();
         ProcesarSalto();
+        ProcesarAtaque();
+    }
+    void ProcesarAtaque()
+    {
+        if (Input.GetKeyDown(KeyCode.F))
+        {
+            animator.SetTrigger(isAttackingId);
+            muzzle.TryFire();
+        }
     }
     bool EstaEnSuelo()
     {
@@ -55,11 +85,11 @@ public class CharacterController : MonoBehaviour
         float inputMovimiento = Input.GetAxisRaw("Horizontal");
         if (inputMovimiento != 0f)
         {
-            animator.SetBool("isRunning", true);
+            animator.SetBool(isRunningId, true);
         }
         else
         {
-            animator.SetBool("isRunning", false);
+            animator.SetBool(isRunningId, false);
         }
         rigidbody.velocity = new Vector2(inputMovimiento * velocidad, rigidbody.velocity.y);
         GestionarMovimiento(inputMovimiento);
@@ -85,20 +115,39 @@ public class CharacterController : MonoBehaviour
         {
             direccionX = 1;
         }
-        
+
         direccionGolpe = new Vector2(direccionX, 1);
         rigidbody.AddForce(direccionGolpe * fuerzaGolpe);
         StartCoroutine(EsperarYActivarMovimiento());
     }
-    IEnumerator EsperarYActivarMovimiento() {
+    public void PerderVidaPJ()
+    {
+        vidas -= 1;
+        if (vidas == 0)
+        {
+            //Reiniciar Nivel
+            SceneManager.LoadScene(0);
+        }
+        EventBus<int>.Publish(GameEvent.VidaPerdida, vidas);
+        animator.SetTrigger(isAttackedId);
+        //StartCoroutine(EsperarAnimacionAtacado());
+    }
+    IEnumerator EsperarYActivarMovimiento()
+    {
         // Wait before checking if grounded.
         yield return new WaitForSeconds(0.1f);
-        while (!EstaEnSuelo()) {
+        while (!EstaEnSuelo())
+        {
             // Esperamos al siguiente frame
             yield return null;
         }
-
         // Si ya está en el suelo activamos el movimiento.
         puedeMoverse = true;
+    }
+    IEnumerator EsperarAnimacionAtacado() {
+        
+        yield return new WaitForSeconds(0.1f);
+        
+        animator.SetBool("isAttacked", false);
     }
 }

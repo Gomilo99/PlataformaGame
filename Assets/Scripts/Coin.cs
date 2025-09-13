@@ -11,8 +11,8 @@ public class Coin : MonoBehaviour
     {
         if (collision.CompareTag("Player"))
         {
-            GameManager.Instance.SumarPuntos(valor);
-            Debug.Log("Colision");
+            Debug.Log("Trigger with Player detected!");
+            EventBus<int>.Publish(GameEvent.CoinCollected, valor);
             Destroy(this.gameObject);
             AudioManager.Instance.ReproducirSonido(sonidoMoneda);
         }
