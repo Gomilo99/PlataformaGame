@@ -165,12 +165,10 @@ MonoBehaviour:
   m_GameObject: {fileID: 360208028281735422}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f630d8425e26c4544b4bdbf0cb51882b, type: 3}
+  m_Script: {fileID: 11500000, guid: 92138b1898e141249accb611ec6627c3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  vida: 3
-  cooldownAtaque: 3
-  sonidoDano: {fileID: 8300000, guid: c3ed227c476fda940ae4e98b95dec9a8, type: 3}
-  sonidoMuerte: {fileID: 0}
-  animator: {fileID: 0}
-  rigidbody: {fileID: 0}
+  vida: 10
+  cooldownAtaque: 0
+  sonidoDano: {fileID: 8300000, guid: d14a668675490434d8c0f977f3935bf0, type: 3}
+  sonidoMuerte: {fileID: 8300000, guid: 58a5e13db64457c439213fef13a08853, type: 3}

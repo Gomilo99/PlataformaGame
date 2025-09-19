@@ -453,13 +453,13 @@ TextureImporter:
       name: FinnSprite_17
       rect:
         serializedVersion: 2
-        x: 544
+        x: 550
         y: 6
-        width: 26
+        width: 20
         height: 22
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
-      border: {x: 6, y: 0, z: 5, w: 3}
+      border: {x: 0, y: 0, z: 5, w: 3}
       outline: []
       physicsShape: []
       tessellationDetail: 0
@@ -476,11 +476,11 @@ TextureImporter:
         serializedVersion: 2
         x: 582
         y: 6
-        width: 19
+        width: 20
         height: 22
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
-      border: {x: 0, y: 0, z: 4, w: 3}
+      border: {x: 0, y: 0, z: 5, w: 3}
       outline: []
       physicsShape: []
       tessellationDetail: 0

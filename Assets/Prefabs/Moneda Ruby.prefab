@@ -143,9 +143,8 @@ MonoBehaviour:
   m_GameObject: {fileID: 6964644677970111557}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a0c4c71be61965c4fb4f19ac913d0b56, type: 3}
+  m_Script: {fileID: 11500000, guid: 9eb47b682ae0b5d48a70106c8f858652, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  valor: 10
-  gameManager: {fileID: 0}
+  valor: 20
   sonidoMoneda: {fileID: 8300000, guid: c63e84b30862f8349b68461fa64749ca, type: 3}
