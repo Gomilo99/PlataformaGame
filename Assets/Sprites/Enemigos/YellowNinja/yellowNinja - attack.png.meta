@@ -96,13 +96,13 @@ TextureImporter:
       name: yellowNinja - attack_0
       rect:
         serializedVersion: 2
-        x: 48
+        x: 0
         y: 32
-        width: 25
-        height: 47
+        width: 128
+        height: 48
       alignment: 0
-      pivot: {x: 0.5, y: 0.5}
-      border: {x: 0, y: 0, z: 0, w: 12}
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
       tessellationDetail: 0
@@ -117,13 +117,13 @@ TextureImporter:
       name: yellowNinja - attack_1
       rect:
         serializedVersion: 2
-        x: 176
+        x: 128
         y: 32
-        width: 25
-        height: 47
+        width: 128
+        height: 48
       alignment: 0
-      pivot: {x: 0.5, y: 0.5}
-      border: {x: 3, y: 0, z: 0, w: 12}
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
       tessellationDetail: 0
@@ -138,13 +138,13 @@ TextureImporter:
       name: yellowNinja - attack_2
       rect:
         serializedVersion: 2
-        x: 308
+        x: 256
         y: 32
-        width: 21
-        height: 47
+        width: 128
+        height: 48
       alignment: 0
-      pivot: {x: 0.5, y: 0.5}
-      border: {x: 0, y: 0, z: 0, w: 12}
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
       tessellationDetail: 0
@@ -159,13 +159,13 @@ TextureImporter:
       name: yellowNinja - attack_3
       rect:
         serializedVersion: 2
-        x: 435
+        x: 384
         y: 32
-        width: 22
-        height: 47
+        width: 128
+        height: 48
       alignment: 0
-      pivot: {x: 0.5, y: 0.5}
-      border: {x: 0, y: 0, z: 0, w: 12}
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
       tessellationDetail: 0
@@ -180,13 +180,13 @@ TextureImporter:
       name: yellowNinja - attack_4
       rect:
         serializedVersion: 2
-        x: 548
+        x: 512
         y: 32
-        width: 36
+        width: 128
         height: 48
       alignment: 0
-      pivot: {x: 0.5, y: 0.5}
-      border: {x: 9, y: 0, z: 0, w: 13}
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
       tessellationDetail: 0
@@ -201,13 +201,13 @@ TextureImporter:
       name: yellowNinja - attack_5
       rect:
         serializedVersion: 2
-        x: 654
+        x: 640
         y: 32
-        width: 58
+        width: 128
         height: 48
       alignment: 0
-      pivot: {x: 0.5, y: 0.5}
-      border: {x: 31, y: 0, z: 0, w: 0}
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
       tessellationDetail: 0
@@ -222,13 +222,13 @@ TextureImporter:
       name: yellowNinja - attack_6
       rect:
         serializedVersion: 2
-        x: 792
+        x: 768
         y: 32
-        width: 48
+        width: 128
         height: 48
       alignment: 0
-      pivot: {x: 0.5, y: 0.5}
-      border: {x: 22, y: 0, z: 0, w: 0}
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
       tessellationDetail: 0
@@ -243,13 +243,13 @@ TextureImporter:
       name: yellowNinja - attack_7
       rect:
         serializedVersion: 2
-        x: 949
+        x: 896
         y: 32
-        width: 69
+        width: 128
         height: 48
       alignment: 0
-      pivot: {x: 0.5, y: 0.5}
-      border: {x: 0, y: 0, z: 40, w: 0}
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
       tessellationDetail: 0
@@ -264,13 +264,13 @@ TextureImporter:
       name: yellowNinja - attack_8
       rect:
         serializedVersion: 2
-        x: 1077
+        x: 1024
         y: 32
-        width: 70
+        width: 128
         height: 48
       alignment: 0
-      pivot: {x: 0.5, y: 0.5}
-      border: {x: 0, y: 0, z: 40, w: 0}
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
       tessellationDetail: 0
@@ -285,13 +285,13 @@ TextureImporter:
       name: yellowNinja - attack_9
       rect:
         serializedVersion: 2
-        x: 1205
+        x: 1152
         y: 32
-        width: 70
+        width: 128
         height: 48
       alignment: 0
-      pivot: {x: 0.5, y: 0.5}
-      border: {x: 0, y: 0, z: 40, w: 0}
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
       tessellationDetail: 0
@@ -306,13 +306,13 @@ TextureImporter:
       name: yellowNinja - attack_10
       rect:
         serializedVersion: 2
-        x: 1333
+        x: 1280
         y: 32
-        width: 65
+        width: 128
         height: 48
       alignment: 0
-      pivot: {x: 0.5, y: 0.5}
-      border: {x: 0, y: 0, z: 37, w: 0}
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
       tessellationDetail: 0
@@ -327,13 +327,13 @@ TextureImporter:
       name: yellowNinja - attack_11
       rect:
         serializedVersion: 2
-        x: 1461
+        x: 1408
         y: 32
-        width: 41
+        width: 128
         height: 48
       alignment: 0
-      pivot: {x: 0.5, y: 0.5}
-      border: {x: 0, y: 0, z: 20, w: 0}
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
       tessellationDetail: 0
@@ -348,13 +348,13 @@ TextureImporter:
       name: yellowNinja - attack_12
       rect:
         serializedVersion: 2
-        x: 1582
+        x: 1536
         y: 32
-        width: 27
+        width: 128
         height: 48
       alignment: 0
-      pivot: {x: 0.5, y: 0.5}
-      border: {x: 2, y: 0, z: 0, w: 0}
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
       tessellationDetail: 0
@@ -369,13 +369,13 @@ TextureImporter:
       name: yellowNinja - attack_13
       rect:
         serializedVersion: 2
-        x: 1700
+        x: 1664
         y: 32
-        width: 36
+        width: 128
         height: 48
       alignment: 0
-      pivot: {x: 0.5, y: 0.5}
-      border: {x: 10, y: 0, z: 0, w: 0}
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
       tessellationDetail: 0
@@ -390,13 +390,13 @@ TextureImporter:
       name: yellowNinja - attack_14
       rect:
         serializedVersion: 2
-        x: 1826
+        x: 1792
         y: 32
-        width: 38
+        width: 128
         height: 48
       alignment: 0
-      pivot: {x: 0.5, y: 0.5}
-      border: {x: 11, y: 0, z: 0, w: 0}
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
       tessellationDetail: 0
@@ -411,13 +411,13 @@ TextureImporter:
       name: yellowNinja - attack_15
       rect:
         serializedVersion: 2
-        x: 1953
+        x: 1920
         y: 32
-        width: 39
+        width: 128
         height: 48
       alignment: 0
-      pivot: {x: 0.5, y: 0.5}
-      border: {x: 12, y: 0, z: 0, w: 0}
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
       tessellationDetail: 0
@@ -432,13 +432,13 @@ TextureImporter:
       name: yellowNinja - attack_16
       rect:
         serializedVersion: 2
-        x: 2084
+        x: 2048
         y: 32
-        width: 37
+        width: 128
         height: 48
       alignment: 0
-      pivot: {x: 0.5, y: 0.5}
-      border: {x: 14, y: 0, z: 0, w: 0}
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
       tessellationDetail: 0
@@ -453,13 +453,13 @@ TextureImporter:
       name: yellowNinja - attack_17
       rect:
         serializedVersion: 2
-        x: 2221
+        x: 2176
         y: 32
-        width: 28
+        width: 128
         height: 48
       alignment: 0
-      pivot: {x: 0.5, y: 0.5}
-      border: {x: 6, y: 0, z: 0, w: 0}
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
       tessellationDetail: 0
@@ -474,12 +474,12 @@ TextureImporter:
       name: yellowNinja - attack_18
       rect:
         serializedVersion: 2
-        x: 2353
+        x: 2304
         y: 32
-        width: 24
+        width: 128
         height: 48
       alignment: 0
-      pivot: {x: 0.5, y: 0.5}
+      pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
@@ -495,13 +495,13 @@ TextureImporter:
       name: yellowNinja - attack_19
       rect:
         serializedVersion: 2
-        x: 2480
+        x: 2432
         y: 32
-        width: 25
+        width: 128
         height: 48
       alignment: 0
-      pivot: {x: 0.5, y: 0.5}
-      border: {x: 3, y: 0, z: 0, w: 0}
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
       tessellationDetail: 0
@@ -536,7 +536,6 @@ TextureImporter:
       yellowNinja - attack_18: -967411744
       yellowNinja - attack_19: -1616888560
       yellowNinja - attack_2: 984409203
-      yellowNinja - attack_20: -1278383538
       yellowNinja - attack_3: -590660917
       yellowNinja - attack_4: -645472383
       yellowNinja - attack_5: 148082231

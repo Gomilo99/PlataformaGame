@@ -8,10 +8,8 @@ using UnityEngine;
 [RequireComponent(typeof(Collider2D))]
 public class EnemyWeaponHitbox : MonoBehaviour
 {
-    [SerializeField] private float damage = 1;
-    [SerializeField] private LayerMask playerMask; // capa a la que pertenece el Player
-    [SerializeField] private string playerTag = "Player";
-    [SerializeField] private string attackingTrigger = "TriggerAttacked"; // Animator trigger (puede mapearse a isAttacking)
+    [SerializeField] public float Damage { get; private set; } = 1f;
+    [SerializeField] private LayerMask playerMask; // capas válidas para golpear
     [SerializeField] private AudioClip sonidoAtaque;
 
     private Collider2D col;
@@ -28,12 +26,9 @@ public class EnemyWeaponHitbox : MonoBehaviour
         if (!enabled || !gameObject.activeInHierarchy) return;
 
         // Filtrar por capa o tag
-        if (((1 << other.gameObject.layer) & playerMask) == 0 && !other.CompareTag(playerTag))
-            return;
+        if (!((playerMask.value & (1 << other.gameObject.layer)) != 0)) return;
+        if (sonidoAtaque && AudioManager.Instance)
+            AudioManager.Instance.ReproducirSonido(sonidoAtaque);
 
-        // Intentar aplicar daño al jugador
-        //gameObject.GetComponentInParent<Animator>()?.SetTrigger(attackingTrigger);
-        other.GetComponent<GameManager>()?.PerderVida(damage);
-        AudioManager.Instance.ReproducirSonido(sonidoAtaque);
     }
 }

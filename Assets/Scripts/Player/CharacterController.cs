@@ -8,10 +8,10 @@ using UnityEngine.SceneManagement;
 public class CharacterController : MonoBehaviour
 { 
     // Animator params (optimizados con hash)
-    private static readonly int isJumpingId = Animator.StringToHash("IsJumping");
-    private static readonly int isAttackedId = Animator.StringToHash("isAttacked");
-    private static readonly int isRunningId = Animator.StringToHash("isRunning");
-    private static readonly int isAttackingId    = Animator.StringToHash("isAttacking");
+    private static string isJumpingId = "IsJumping";
+    private static string isAttackedId = "isAttacked";
+    private static string isRunningId = "isRunning";
+    private static string isAttackingId = "isAttacking";
 
     [Header("Moving Parameters")]
     [SerializeField] public float velocidad = 5;
@@ -24,6 +24,8 @@ public class CharacterController : MonoBehaviour
     [Header("Hit Parameters")]
     [SerializeField] public float fuerzaGolpe;
     [SerializeField] public float ataque = 1;
+    [SerializeField] public LayerMask enemyWeaponMask;
+    [SerializeField] public AudioClip sonidoAtacado;
 
     [Header("Object References")]
     [SerializeField] public Weapon2D muzzle;
@@ -103,6 +105,7 @@ public class CharacterController : MonoBehaviour
     public void AplicarGolpe()
     {
         puedeMoverse = false;
+        animator.SetTrigger(isAttackedId);
         Vector2 direccionGolpe;
         int direccionX;
         if (rigidbody.velocity.x > 0)
@@ -123,6 +126,24 @@ public class CharacterController : MonoBehaviour
         animator.SetTrigger(isAttackedId);
         // Aseguramos que no quede atrapado si el estado necesita salir.
         StartCoroutine(ResetAttackedFlagSafeguard());
+    }
+    private void OnTriggerEnter2D(Collider2D other)
+    {
+        // Filtrar por capa o tag
+        if (!((enemyWeaponMask.value & (1 << other.gameObject.layer)) != 0)) return;
+
+        var enemyHitBox = other.gameObject.GetComponent<EnemyWeaponHitbox>();
+        if (!enemyHitBox)
+        {
+            Debug.LogWarning("El objeto que colisiona no tiene componente EnemyWeaponHitbox: " + other.gameObject.name);
+            return;
+        }
+
+        GameManager.Instance.PerderVida(enemyHitBox.Damage);
+        AplicarGolpe();
+        if (sonidoAtacado && AudioManager.Instance)
+            AudioManager.Instance.ReproducirSonido(sonidoAtacado);
+
     }
     IEnumerator EsperarYActivarMovimiento()
     {

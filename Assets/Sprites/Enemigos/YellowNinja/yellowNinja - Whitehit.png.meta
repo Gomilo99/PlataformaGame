@@ -96,10 +96,10 @@ TextureImporter:
       name: yellowNinja - Whitehit_0
       rect:
         serializedVersion: 2
-        x: 50
+        x: 0
         y: 32
-        width: 23
-        height: 35
+        width: 128
+        height: 48
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -117,10 +117,10 @@ TextureImporter:
       name: yellowNinja - Whitehit_1
       rect:
         serializedVersion: 2
-        x: 179
+        x: 128
         y: 32
-        width: 23
-        height: 35
+        width: 128
+        height: 48
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -138,10 +138,10 @@ TextureImporter:
       name: yellowNinja - Whitehit_2
       rect:
         serializedVersion: 2
-        x: 306
+        x: 256
         y: 32
-        width: 23
-        height: 35
+        width: 128
+        height: 48
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -159,10 +159,10 @@ TextureImporter:
       name: yellowNinja - Whitehit_3
       rect:
         serializedVersion: 2
-        x: 432
+        x: 384
         y: 32
-        width: 25
-        height: 35
+        width: 128
+        height: 48
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}

@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-[RequireComponent(typeof(Rigidbody2D), typeof(Collider2D))]
+[RequireComponent(typeof(Rigidbody2D), typeof(Collider2D), typeof(Animator))]
 public class Bullet : MonoBehaviour
 {
     [Header("Tuning")]
@@ -11,11 +11,13 @@ public class Bullet : MonoBehaviour
     [SerializeField] private float damage = 1;
 
     private Rigidbody2D rb;
+    private Collider2D col;
     private float deathTime;
     private System.Action<Bullet> _onReturnToPool; // callback al pool
 
     [Header("Collision")]
-    [SerializeField] private string enemyTag = "Enemigo";
+    [SerializeField] private string enemyTag = "Enemigo"; // fallback si no se usa layer
+    [SerializeField] private LayerMask enemyLayers; // capas que puede dañar
     [SerializeField] private string impactTriggerId = "ImpactedBall"; // Trigger del Animator del proyectil
     [SerializeField] private float impactReturnDelay = 0.2f; // Duración de la animación de impacto
     [SerializeField] private AudioClip collisionSound; // Sonido de colisión
@@ -23,6 +25,18 @@ public class Bullet : MonoBehaviour
     void Awake()
     {
         rb = GetComponent<Rigidbody2D>();
+        col = GetComponent<Collider2D>();
+        if (!rb)
+        {
+            Debug.LogError("Rigidbody2D no encontrado en " + gameObject.name);
+            return;
+        }
+        if(!col)
+        {
+            Debug.LogError("Collider2D no encontrado en " + gameObject.name);
+            return;
+        }
+
         // Recomendado para proyectiles
         rb.gravityScale = 0f;
         rb.collisionDetectionMode = CollisionDetectionMode2D.Continuous;
@@ -67,30 +81,23 @@ public class Bullet : MonoBehaviour
     void OnTriggerEnter2D(Collider2D other)
     {
         if (isImpacting) return;
-        if (!other.CompareTag(enemyTag)) return;
+        bool layerMatch = ((1 << other.gameObject.layer) & enemyLayers) != 0;
+        if (!layerMatch && !other.CompareTag(enemyTag)) return;
 
         isImpacting = true;
-        other.gameObject.GetComponent<Enemigo>()?.RecibirDanoFoe(damage);
         // Detener movimiento y evitar múltiples triggers
         rb.velocity = Vector2.zero;
-        var col = GetComponent<Collider2D>();
-        if (col) col.enabled = false;
+
+        col.enabled = false;
 
         // Activar animación de colisión en la bala (requiere Animator con trigger "Impact")
         var anim = GetComponent<Animator>();
-        if (anim != null)
-        {
             anim.ResetTrigger(impactTriggerId);
             anim.SetTrigger(impactTriggerId);
             StartCoroutine(ReturnAfterImpact(col));
-        }
-        else
-        {
-            // Si no hay animación, volver al pool inmediatamente
-            if (col) col.enabled = true;
-            isImpacting = false;
-            ReturnToPool();
-        }
     }
-
+    public float GetDamage()
+    {
+        return damage;
+    }
 }

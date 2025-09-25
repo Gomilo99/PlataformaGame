@@ -31,7 +31,6 @@ public class EnemyPatrol2DEditor : Editor
 
     // Animator
     SerializedProperty animatorProp;
-    SerializedProperty runningId;
 
     // Gizmos
     SerializedProperty gizmoPatrolColor;
@@ -53,8 +52,8 @@ public class EnemyPatrol2DEditor : Editor
         center = serializedObject.FindProperty("center");
         leftOffset = serializedObject.FindProperty("leftOffset");
         rightOffset = serializedObject.FindProperty("rightOffset");
-    useOwnCenter = serializedObject.FindProperty("useOwnCenter");
-    useColliderWidth = serializedObject.FindProperty("useColliderWidth");
+        useOwnCenter = serializedObject.FindProperty("useOwnCenter");
+        useColliderWidth = serializedObject.FindProperty("useColliderWidth");
 
         groundCheck = serializedObject.FindProperty("groundCheck");
         wallCheck = serializedObject.FindProperty("wallCheck");
@@ -63,7 +62,6 @@ public class EnemyPatrol2DEditor : Editor
         wallCheckDistance = serializedObject.FindProperty("wallCheckDistance");
 
         animatorProp = serializedObject.FindProperty("animator");
-        runningId = serializedObject.FindProperty("runningId");
 
         gizmoPatrolColor = serializedObject.FindProperty("gizmoPatrolColor");
         gizmoLimitColor = serializedObject.FindProperty("gizmoLimitColor");
@@ -141,7 +139,6 @@ public class EnemyPatrol2DEditor : Editor
         EditorGUILayout.Space();
         EditorGUILayout.LabelField("Animator (opcional)", EditorStyles.boldLabel);
         EditorGUILayout.PropertyField(animatorProp);
-        EditorGUILayout.PropertyField(runningId);
 
         EditorGUILayout.Space();
         EditorGUILayout.LabelField("Debug / Gizmos", EditorStyles.boldLabel);

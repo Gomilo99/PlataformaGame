@@ -48,7 +48,6 @@ public class EnemyPatrol2D : MonoBehaviour
 
     //[Header("Animator (opcional)")]
     [SerializeField] private Animator animator; // si se asigna, se actualizará un bool de correr
-    [SerializeField] private string runningId = "isRunningRigth"; // coincide con tu Enemigo
 
     //[Header("Debug / Gizmos")]
     [SerializeField] private Color gizmoPatrolColor = new Color(0f, 1f, 1f, 1f); // cyan
@@ -59,9 +58,11 @@ public class EnemyPatrol2D : MonoBehaviour
     private Collider2D col; // para calcular extents.x si se desea
     private bool facingRight;
     private bool canMove = true;
+    private bool externalPatrolLock = false; // cuando true, otro sistema controla el movimiento (chase/ataque)
     private float centerX;
     private float originalScaleX;
     private float nextMoveTime;
+    public float BaseSpeed => speed;
 
     void Awake()
     {
@@ -98,24 +99,21 @@ public class EnemyPatrol2D : MonoBehaviour
     void Update()
     {
         // Animator opcional
-        if (animator && !string.IsNullOrEmpty(runningId))
-        {
-            bool isMoving = Mathf.Abs(rb.velocity.x) > 0.01f && canMove;
-            animator.SetBool(runningId, isMoving);
-        }
+        bool isMoving = Mathf.Abs(rb.velocity.x) > 0.01f && canMove;
+        animator.SetBool(Enemigo.isRunning, isMoving);
     }
 
     void FixedUpdate()
     {
-        if (!canMove)
+        // Si un sistema externo (chase/ataque) controla el movimiento, no tocar el Rigidbody
+        if (externalPatrolLock)
         {
-            rb.velocity = new Vector2(0, rb.velocity.y);
             return;
         }
 
-        if (Time.time < nextMoveTime)
+        if (!canMove || Time.time < nextMoveTime)
         {
-            rb.velocity = new Vector2(0, rb.velocity.y);
+            rb.velocity = Vector2.zero;
             return;
         }
 
@@ -132,7 +130,15 @@ public class EnemyPatrol2D : MonoBehaviour
                 break;
         }
     }
-
+    public void Pause(){ canMove = false; }
+    public void Resume(){ canMove = true; }
+    /// <summary>
+    /// Bloquea el movimiento interno de patrulla sin forzar velocidad cero. Útil cuando otro sistema controla el Rigidbody.
+    /// </summary>
+    public void SetExternalPatrolLock(bool locked)
+    {
+        externalPatrolLock = locked;
+    }
     private void PatrolBetweenPoints()
     {
         if (!pointA || !pointB)
@@ -235,16 +241,12 @@ public class EnemyPatrol2D : MonoBehaviour
         s.x = (facingRight ? 1f : -1f) * originalScaleX;
         transform.localScale = s;
     }
-
-    // API pública mínima
-    public void Pause() => canMove = false;
-    public void Resume() => canMove = true;
     public void SetFacingRight(bool value)
     {
         facingRight = value;
         ApplyFacingToScale();
     }
-
+    
     private void OnDrawGizmosSelected()
     {
         Gizmos.color = gizmoPatrolColor;
@@ -296,7 +298,7 @@ public class EnemyPatrol2D : MonoBehaviour
         }
         if (wallCheck)
         {
-            Vector3 dir = (Application.isPlaying ? (facingRight ? Vector3.right : Vector3.left) : Vector3.right);
+            Vector3 dir = Application.isPlaying ? (facingRight ? Vector3.right : Vector3.left) : Vector3.right;
             Gizmos.DrawLine(wallCheck.position, wallCheck.position + dir * wallCheckDistance);
         }
     }

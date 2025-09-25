@@ -14,7 +14,7 @@ GameObject:
   - component: {fileID: 2223292276207665288}
   - component: {fileID: 810250280869407161}
   - component: {fileID: 6708033832781177292}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Bullet
   m_TagString: PlayerWeapon
   m_Icon: {fileID: 0}
@@ -141,6 +141,9 @@ MonoBehaviour:
   lifetime: 2.5
   damage: 1
   enemyTag: Enemigo
+  enemyLayers:
+    serializedVersion: 2
+    m_Bits: 512
   impactTriggerId: ImpactedBall
   impactReturnDelay: 0.2
   collisionSound: {fileID: 8300000, guid: c2d6e842baa3837479ed198a00ad6e5a, type: 3}

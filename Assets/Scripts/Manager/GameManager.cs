@@ -9,9 +9,11 @@ public class GameManager : MonoBehaviour
     public static GameManager Instance { get; private set; }
     public CharacterController player;
     public float vidas = 3;
+    public float VidasTotales;
 
     void Awake()
     {
+        VidasTotales = vidas;
         if (Instance == null)
         {
             Instance = this;
@@ -24,20 +26,19 @@ public class GameManager : MonoBehaviour
     public void PerderVida(float dano)
     {
         vidas -= dano;
-        player.PerderVidaPJ();
-        player.AplicarGolpe();
         if (vidas == 0)
         {
             //Reiniciar Nivel
+            Debug.Log("Game Over");
             SceneManager.LoadScene(0);
         }
-        EventBus<float>.Publish(GameEvent.VidaPerdida, (int)vidas);
+        EventBus<int>.Publish(GameEvent.VidaPerdida, (int)vidas);
     }
     public bool GanarVida()
     {
-        if (vidas == 3) return false;
+        if (vidas == VidasTotales) return false;
 
-        EventBus<float>.Publish(GameEvent.VidaGanada, (int)vidas);
+        EventBus<int>.Publish(GameEvent.VidaGanada, (int)vidas);
         vidas += 1;
         return true;
     }

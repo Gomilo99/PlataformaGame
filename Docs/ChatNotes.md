@@ -203,3 +203,75 @@ Matriz clave:
 
 ---
 © Proyecto PlataformaGame – Notas técnicas (actualizado 2025-09-18).
+ 
+---
+## 11. [2025-09-23] Nuevas mejoras (detección cápsula, capas armas, bloqueo por animación)
+
+### 11.1 Chase con detección en cápsula
+`EnemyChaseBehaviour` ahora soporta área de detección tipo cápsula vertical configurable (altura, radio, offsets, X/Y):
+- Campos nuevos: `useCapsuleDetection`, `capsuleHeight`, `capsuleRadius`, `detectOffsetX`, `detectOffsetY`.
+- Permite al enemigo “ver” en una banda vertical (útil para plataformas) en vez de usar solo un círculo.
+- Si `capsuleRadius` = 0 usa `detectionRadius` como radio lateral.
+- Offsets permiten adelantar la cápsula hacia donde mira el enemigo.
+- Gizmos: se dibujan dos semicírculos y líneas laterales; el área de pérdida (lose) se visualiza más tenue.
+
+### 11.2 Ventana vertical de ataque
+Campo nuevo: `attackVerticalWindow` – el enemigo solo ataca si la diferencia vertical |ΔY| <= ventana. Evita golpes cuando el jugador está claramente arriba/abajo.
+
+### 11.3 Integración con velocidad base sin reflexión
+`EnemyPatrol2D` expone `public float BaseSpeed => speed;` y `EnemyChaseBehaviour` deja de usar reflexión para leer la velocidad.
+
+### 11.4 Bloqueo de movimiento durante animaciones críticas
+Se añadió `SetExternalMovementLock(bool)` en `EnemyPatrol2D` y en `Enemigo` se usa en la secuencia de muerte:
+- Al morir: se bloquea patrulla, se desactiva chase, se pone velocidad a 0 y se lanza el trigger `deathTrigger` antes de `Destroy`.
+- Evita que el enemigo siga deslizándose mientras muere o ataca (puedes también llamar a `SetExternalMovementLock(true)` desde un evento de animación de ataque si quieres inmovilizar completamente durante el golpe).
+
+### 11.5 Hitbox de arma enemigo refinada
+`EnemyWeaponHitbox` ahora:
+- Usa `LayerMask playerMask` + tag fallback.
+- Opción `autoDisableAfterHit` para desactivar el GO tras un impacto (controlado de nuevo por evento de animación para reactivarlo).
+- Reproduce sonido solo si está asignado.
+
+### 11.6 Balas usando capas
+`Bullet.cs` incorpora `LayerMask enemyLayers` además del tag; la colisión valida `layerMatch || tag` para flexibilidad de transición.
+
+### 11.7 Detección y ataque ordenados
+Secuencia: Detección (cápsula/círculo) -> Chasing -> Ataque (verifica distancia + ventana vertical + cooldown) -> Activación de hitbox por animación.
+
+### 11.8 Recomendación adicional (pendiente opcional)
+- Exponer un evento C# (Action) en `Enemigo` para notificar UI al morir.
+- Reemplazar búsqueda de Player (`FindGameObjectWithTag`) por cache central (ya se usa `GameManager.Instance.player`).
+- Ajustar duración `DeathSequence` al clip real: sustituir 0.6f por `GetAnimationLength(deathTrigger)` si se implementa un helper.
+
+### 11.9 Checklist de configuración tras cambios
+1. Asignar `playerMask` en `EnemyChaseBehaviour` y `EnemyWeaponHitbox` (capa Player).
+2. Ajustar `capsuleHeight` para cubrir salto medio del jugador, pero no pisos arriba.
+3. `detectOffsetX` positivo para mirar hacia delante (0.5–1.0 recomendado) si el pivot está al centro.
+4. Ajustar `attackVerticalWindow` a tolerancia (1.0–1.5 inicial).
+5. Revisar que la animación de muerte tenga el trigger definido en `deathTrigger` (por defecto "Die").
+6. Asegurar que los eventos de animación de ataque vuelven a activar/desactivar hitbox.
+
+### 11.10 Resumen rápido
+- Detección más precisa (cápsula vertical con offsets).
+- Ataques restringidos por ventana vertical.
+- Patrulla/chase se integran mejor con muerte y animaciones.
+- Hitboxes y balas usan capas configurables.
+- Código más limpio (sin reflexión).
+
+### 11.11 Espera dinámica de animación de muerte (nuevo) Comentado pq no me cuadra
+Archivo: `Enemigo.cs`
+
+- Nuevos campos:
+    - `waitForDeathAnimation` (bool): si está activo, la corrutina de muerte espera a que el Animator entre y finalice un estado con tag `deathStateTag`.
+    - `deathStateTag` (string): etiqueta del estado de muerte. Configura tu estado de muerte en el Animator con esta Tag (por defecto "Death").
+    - `deathTime` (float): tiempo de respaldo si no se puede detectar la animación.
+- Protección: `isDying` evita arrancar múltiples veces la secuencia.
+- Integración: se dispara el trigger `isDead` y se bloquea movimiento (patrulla/chase) antes de destruir el GO cuando termina el clip.
+
+Checklist para usarlo:
+1) En tu Animator, abre el state de muerte y en la esquina superior izquierda asigna la Tag "Death" (o el valor de `deathStateTag`).
+2) Asegúrate de que la transición al estado de muerte se activa con el trigger configurado (por defecto `isDead`).
+3) Si no deseas esperar al final del clip, desactiva `waitForDeathAnimation` y se usará `deathTime` como fallback.
+
+---
+© Proyecto PlataformaGame – Notas técnicas (actualizado 2025-09-23).
