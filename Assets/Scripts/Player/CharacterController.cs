@@ -8,10 +8,10 @@ using UnityEngine.SceneManagement;
 public class CharacterController : MonoBehaviour
 { 
     // Animator params (optimizados con hash)
-    private static string isJumpingId = "IsJumping";
-    private static string isAttackedId = "isAttacked";
+    private static string isJumpingId = "TriggerJump";
+    private static string isAttackedId = "TriggerAttacked";
     private static string isRunningId = "isRunning";
-    private static string isAttackingId = "isAttacking";
+    private static string isAttackingId = "TriggerAttacking";
 
     [Header("Moving Parameters")]
     [SerializeField] public float velocidad = 5;
@@ -73,6 +73,7 @@ public class CharacterController : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.Space) && saltosRestantes > 0)
         {
             saltosRestantes--;
+            animator.SetTrigger(isJumpingId);
             rigidbody.velocity = new Vector2(rigidbody.velocity.x, 0f);
             rigidbody.AddForce(Vector2.up * fuerzaSalto, ForceMode2D.Impulse);
             AudioManager.Instance.ReproducirSonido(audioSalto);
@@ -104,21 +105,24 @@ public class CharacterController : MonoBehaviour
     }
     public void AplicarGolpe()
     {
+        // Desactivar movimiento mientras dura la reacción al golpe
         puedeMoverse = false;
         animator.SetTrigger(isAttackedId);
-        Vector2 direccionGolpe;
-        int direccionX;
-        if (rigidbody.velocity.x > 0)
-        {
-            direccionX = -1;
-        }
-        else
-        {
-            direccionX = 1;
-        }
 
-        direccionGolpe = new Vector2(direccionX, 1);
-        rigidbody.AddForce(direccionGolpe * fuerzaGolpe);
+        // Determinar dirección del empuje basado en la orientación del personaje
+        int direccionX = mirandoDerecha ? -1 : 1; // empujar hacia atrás del atacante (si mira a la derecha, empujamos a la izquierda)
+
+        // Construir vector de fuerza y normalizar para mantener proporciones controladas
+        Vector2 direccionGolpe = new Vector2(direccionX, 1).normalized;
+
+        // Reiniciar la velocidad vertical para que el impulso sea consistente
+        rigidbody.velocity = new Vector2(rigidbody.velocity.x, 0f);
+
+        // Aplicar la fuerza como impulso para obtener un empujón instantáneo
+        rigidbody.AddForce(direccionGolpe * fuerzaGolpe, ForceMode2D.Impulse);
+
+        Debug.Log("AplicarGolpe: dirección=" + direccionGolpe + " fuerza=" + fuerzaGolpe);
+
         StartCoroutine(EsperarYActivarMovimiento());
     }
     public void PerderVidaPJ()

@@ -101,6 +101,8 @@ public class Enemigo : MonoBehaviour
         // Espera a que termine la animación de muerte antes de destruir el objeto.
         float deadAnimationTime = animator.GetCurrentAnimatorStateInfo(0).length;
         yield return new WaitForSeconds(deadAnimationTime);
+        // Notificar muerte de enemigo para contadores de progreso
+        EventBus<int>.Publish(GameEvent.EnemyKilled, 1);
         Destroy(gameObject);
     }
 

@@ -20,7 +20,7 @@ TagManager:
   - Enemy
   - EnemyWeapon
   - EnemyWall
-  - 
+  - EnemyUI
   - 
   - 
   - 
@@ -41,17 +41,20 @@ TagManager:
   - 
   - 
   m_SortingLayers:
-  - name: Scenario
-    uniqueID: 568647001
-    locked: 0
   - name: Background
     uniqueID: 3640739727
+    locked: 0
+  - name: Scenario
+    uniqueID: 568647001
     locked: 0
   - name: Default
     uniqueID: 0
     locked: 0
   - name: ObjetosFrente
     uniqueID: 1286385341
+    locked: 0
+  - name: EnemyUI
+    uniqueID: 4032797703
     locked: 0
   - name: UI
     uniqueID: 2677486235

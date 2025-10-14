@@ -47,6 +47,7 @@ public class EnemyChaseBehaviour : MonoBehaviour
     [SerializeField] private Animator animator;
 
     private Rigidbody2D rb;
+    private RigidbodyConstraints2D savedConstraints;
     private float baseSpeed;
     private bool chasing;
     private float nextAttackTime;
@@ -67,6 +68,8 @@ public class EnemyChaseBehaviour : MonoBehaviour
         animator = GetComponent<Animator>();
         patrol = GetComponent<EnemyPatrol2D>();
         baseSpeed = patrol.BaseSpeed;
+        // Guardar constraints iniciales para restaurarlas después del ataque
+        savedConstraints = rb.constraints;
     }
 
     void Start()
@@ -157,6 +160,10 @@ public class EnemyChaseBehaviour : MonoBehaviour
         isAttacking = true;
         rb.velocity = new Vector2(0, rb.velocity.y);
 
+        // Durante el ataque bloqueamos la posición X para evitar que fuerzas externas (p.ej. empujes del jugador)
+        // hagan que el enemigo salga "volando" cuando su velocidad se pone a 0.
+        rb.constraints = RigidbodyConstraints2D.FreezePositionX | RigidbodyConstraints2D.FreezeRotation;
+
         animator.SetBool(Enemigo.isRunning, false);
     // La patrulla ya está deshabilitada durante el chase
 
@@ -179,7 +186,9 @@ public class EnemyChaseBehaviour : MonoBehaviour
 
         animator.ResetTrigger(Enemigo.attackingTrigger);
         isAttacking = false;
-    // No reactivar patrulla aquí: se reactiva al salir del chase
+        // Restaurar constraints originales
+        rb.constraints = savedConstraints;
+        // No reactivar patrulla aquí: se reactiva al salir del chase
         // Si seguimos en chase, mantenemos el candado; si no, lo liberamos en la transición de salida
     }
 

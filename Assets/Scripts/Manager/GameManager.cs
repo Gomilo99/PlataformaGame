@@ -10,7 +10,7 @@ public class GameManager : MonoBehaviour
     public CharacterController player;
     public float vidas = 3;
     public float VidasTotales;
-
+    int actualscene;
     void Awake()
     {
         VidasTotales = vidas;
@@ -22,6 +22,7 @@ public class GameManager : MonoBehaviour
         {
             Debug.Log("Más de un Game Manager en escena!");
         }
+        actualscene = SceneManager.GetActiveScene().buildIndex;
     }
     public void PerderVida(float dano)
     {
@@ -30,7 +31,7 @@ public class GameManager : MonoBehaviour
         {
             //Reiniciar Nivel
             Debug.Log("Game Over");
-            SceneManager.LoadScene(0);
+            SceneManager.LoadScene(actualscene);
         }
         EventBus<int>.Publish(GameEvent.VidaPerdida, (int)vidas);
     }

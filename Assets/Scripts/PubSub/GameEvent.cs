@@ -4,4 +4,9 @@ public enum GameEvent
     TreeInitialized,
     VidaGanada,
     VidaPerdida,
+    EnemyKilled,
+    GamePaused,
+    GameResumed,
+    LevelReset,
+    WinConditionMet,
 }

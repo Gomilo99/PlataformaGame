@@ -46,7 +46,7 @@ public class EnemyPatrol2D : MonoBehaviour
 
     [SerializeField] private float wallCheckDistance = 0.1f;
 
-    //[Header("Animator (opcional)")]
+    //[Header("Animator Running")]
     [SerializeField] private Animator animator; // si se asigna, se actualizará un bool de correr
 
     //[Header("Debug / Gizmos")]
