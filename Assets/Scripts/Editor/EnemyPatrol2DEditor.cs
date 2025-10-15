@@ -37,6 +37,12 @@ public class EnemyPatrol2DEditor : Editor
     SerializedProperty gizmoLimitColor;
     SerializedProperty gizmoRayColor;
 
+    // Avoid other enemies
+    SerializedProperty avoidOtherEnemies;
+    SerializedProperty enemyLayer;
+    SerializedProperty enemyCheckDistance;
+    SerializedProperty instantFlipOnEnemy;
+
     void OnEnable()
     {
         mode = serializedObject.FindProperty("mode");
@@ -66,6 +72,11 @@ public class EnemyPatrol2DEditor : Editor
         gizmoPatrolColor = serializedObject.FindProperty("gizmoPatrolColor");
         gizmoLimitColor = serializedObject.FindProperty("gizmoLimitColor");
         gizmoRayColor = serializedObject.FindProperty("gizmoRayColor");
+
+        avoidOtherEnemies = serializedObject.FindProperty("avoidOtherEnemies");
+        enemyLayer = serializedObject.FindProperty("enemyLayer");
+        enemyCheckDistance = serializedObject.FindProperty("enemyCheckDistance");
+        instantFlipOnEnemy = serializedObject.FindProperty("instantFlipOnEnemy");
     }
 
     public override void OnInspectorGUI()
@@ -145,6 +156,17 @@ public class EnemyPatrol2DEditor : Editor
         EditorGUILayout.PropertyField(gizmoPatrolColor);
         EditorGUILayout.PropertyField(gizmoLimitColor);
         EditorGUILayout.PropertyField(gizmoRayColor);
+
+        EditorGUILayout.Space();
+        EditorGUILayout.LabelField("Evitación entre enemigos", EditorStyles.boldLabel);
+        EditorGUILayout.PropertyField(avoidOtherEnemies, new GUIContent("Activar", "Si está activo, el enemigo detecta otros enemigos delante y gira para evitar atascarse."));
+        EditorGUILayout.PropertyField(enemyLayer, new GUIContent("Enemy Layer", "LayerMask que usan los enemigos para detectarse entre sí."));
+        EditorGUILayout.PropertyField(enemyCheckDistance, new GUIContent("Distancia detección", "Distancia frontal del raycast para detectar otro enemigo."));
+        EditorGUILayout.PropertyField(instantFlipOnEnemy, new GUIContent("Giro instantáneo", "Girar sin esperar pausa cuando se detecta otro enemigo."));
+        if (avoidOtherEnemies.boolValue && enemyLayer.intValue == 0)
+        {
+            EditorGUILayout.HelpBox("'Avoid Other Enemies' está activo pero no hay ninguna capa seleccionada en 'Enemy Layer'. Selecciona la capa donde están tus enemigos.", MessageType.Warning);
+        }
 
         serializedObject.ApplyModifiedProperties();
     }

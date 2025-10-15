@@ -54,6 +54,14 @@ public class EnemyPatrol2D : MonoBehaviour
     [SerializeField] private Color gizmoLimitColor = new Color(1f, 0f, 1f, 1f); // magenta
     [SerializeField] private Color gizmoRayColor = new Color(1f, 0.92f, 0.016f, 1f); // yellow
 
+    [Header("Evitación entre enemigos")]
+    [SerializeField] private bool avoidOtherEnemies = true;
+    [SerializeField] private LayerMask enemyLayer; // capa que comparten los enemigos
+    [Tooltip("Distancia frontal para detectar otro enemigo y girar.")]
+    [SerializeField] private float enemyCheckDistance = 0.3f;
+    [Tooltip("Si true, gira instantáneamente al detectar otro enemigo (sin pausa waitAtTurn). Si false, usa TurnAfterWait().")]
+    [SerializeField] private bool instantFlipOnEnemy = true;
+
     private Rigidbody2D rb;
     private Collider2D col; // para calcular extents.x si se desea
     private bool facingRight;
@@ -208,9 +216,36 @@ public class EnemyPatrol2D : MonoBehaviour
             wallAhead = Physics2D.Raycast(wcOrigin, wcDir, wallCheckDistance, groundMask);
         }
 
-        if (!groundAhead || wallAhead)
+        // Detección de otro enemigo enfrente para evitar quedarse "empujando" y congelado
+        bool enemyAhead = false;
+        if (avoidOtherEnemies)
         {
-            StartCoroutine(TurnAfterWait());
+            Vector2 origin = wallCheck ? (Vector2)wallCheck.position : (Vector2)transform.position;
+            Vector2 dir2 = facingRight ? Vector2.right : Vector2.left;
+            float dist = Mathf.Max(enemyCheckDistance, 0.05f);
+            RaycastHit2D hit = Physics2D.Raycast(origin, dir2, dist, enemyLayer);
+            if (hit.collider != null && hit.collider.gameObject != gameObject)
+            {
+                // Confirmar que no es el mismo collider (en caso de hijos)
+                enemyAhead = hit.collider.transform.root != transform;
+            }
+        }
+
+        if (!groundAhead || wallAhead || enemyAhead)
+        {
+            if (enemyAhead && instantFlipOnEnemy)
+            {
+                // Giro inmediato sin pausa para fluidez
+                facingRight = !facingRight;
+                ApplyFacingToScale();
+                // Pequeño desplazamiento para separar colliders y evitar raycast inmediato recursivo
+                float nudge = 0.02f;
+                transform.position += new Vector3(facingRight ? nudge : -nudge, 0f, 0f);
+            }
+            else
+            {
+                StartCoroutine(TurnAfterWait());
+            }
         }
 
         float dir = facingRight ? 1f : -1f;
@@ -298,8 +333,16 @@ public class EnemyPatrol2D : MonoBehaviour
         }
         if (wallCheck)
         {
-            Vector3 dir = Application.isPlaying ? (facingRight ? Vector3.right : Vector3.left) : Vector3.right;
-            Gizmos.DrawLine(wallCheck.position, wallCheck.position + dir * wallCheckDistance);
+            Vector3 dirWall = Application.isPlaying ? (facingRight ? Vector3.right : Vector3.left) : Vector3.right;
+            Gizmos.DrawLine(wallCheck.position, wallCheck.position + dirWall * wallCheckDistance);
+        }
+
+        // Gizmo para rango de detección de otro enemigo
+        if (avoidOtherEnemies && wallCheck)
+        {
+            Gizmos.color = Color.red;
+            Vector3 dirE = (Application.isPlaying ? (facingRight ? Vector3.right : Vector3.left) : Vector3.right) * enemyCheckDistance;
+            Gizmos.DrawLine(wallCheck.position, wallCheck.position + dirE);
         }
     }
 }

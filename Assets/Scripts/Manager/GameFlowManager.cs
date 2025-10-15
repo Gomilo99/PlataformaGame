@@ -38,7 +38,8 @@ public class GameFlowManager : MonoBehaviour
     public void TogglePause()
     {
         if (won) return;
-        if (paused) Resume(); else Pause();
+        if (paused) Resume();
+        else Pause();
     }
 
     public void Pause()
