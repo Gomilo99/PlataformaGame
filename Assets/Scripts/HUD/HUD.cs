@@ -5,6 +5,7 @@ using UnityEngine;
 
 public class HUD : MonoBehaviour
 {
+    public static HUD Instance { get; private set; }
     [Header("Textos HUD")]
     [Tooltip("Texto para las monedas (puede reutilizarse el existente).")]
     public TextMeshProUGUI puntos; // Monedas
@@ -17,13 +18,17 @@ public class HUD : MonoBehaviour
     public int puntosTotales = 0;
     public int enemigosEliminados = 0;
 
-    private GameFlowManager _flow;
-    private GameManager _gm;
+    [Header("Paneles UI (Canvas)")]
+    public GameObject pausePanel;
+    public GameObject winPanel;
+    public GameObject deathPanel;
+
+    // Ya no guardamos referencia al GameManager; usaremos GameManager.Instance directamente.
 
     private void Awake()
     {
-        _flow = FindObjectOfType<GameFlowManager>();
-        _gm = GameManager.Instance ? GameManager.Instance : FindObjectOfType<GameManager>();
+        if (Instance == null) Instance = this;
+        else if (Instance != this) { Debug.LogWarning("Más de un HUD en escena; manteniendo el primero."); return; }
     }
 
     private void OnEnable()
@@ -35,6 +40,7 @@ public class HUD : MonoBehaviour
         EventBus<bool>.Subscribe(GameEvent.GameResumed, HandleOnGameResumed);
         EventBus<bool>.Subscribe(GameEvent.LevelReset, HandleOnLevelReset);
         EventBus<bool>.Subscribe(GameEvent.WinConditionMet, HandleOnWin);
+        EventBus<bool>.Subscribe(GameEvent.PlayerDied, HandleOnPlayerDied);
 
         RefreshTexts();
     }
@@ -47,6 +53,7 @@ public class HUD : MonoBehaviour
         EventBus<bool>.Unsubscribe(GameEvent.GameResumed, HandleOnGameResumed);
         EventBus<bool>.Unsubscribe(GameEvent.LevelReset, HandleOnLevelReset);
         EventBus<bool>.Unsubscribe(GameEvent.WinConditionMet, HandleOnWin);
+        EventBus<bool>.Unsubscribe(GameEvent.PlayerDied, HandleOnPlayerDied);
     }
 
     private void HandleOnCoinCollected(int coinValue)
@@ -63,11 +70,13 @@ public class HUD : MonoBehaviour
 
     private void HandleOnGamePaused(bool _)
     {
+        if (pausePanel) pausePanel.SetActive(true);
         if (pausaText) pausaText.gameObject.SetActive(true);
     }
 
     private void HandleOnGameResumed(bool _)
     {
+        if (pausePanel) pausePanel.SetActive(false);
         if (pausaText) pausaText.gameObject.SetActive(false);
     }
 
@@ -76,31 +85,40 @@ public class HUD : MonoBehaviour
         puntosTotales = 0;
         enemigosEliminados = 0;
         RefreshTexts();
+        if (pausePanel) pausePanel.SetActive(false);
+        if (winPanel) winPanel.SetActive(false);
+        if (deathPanel) deathPanel.SetActive(false);
         if (pausaText) pausaText.gameObject.SetActive(false);
     }
 
     private void HandleOnWin(bool _)
     {
-        // Si tienes un texto de win aquí, podrías mostrarlo. GameFlowManager ya maneja winPanel.
+        if (winPanel) winPanel.SetActive(true);
+    }
+
+    private void HandleOnPlayerDied(bool _)
+    {
+        if (deathPanel) deathPanel.SetActive(true);
     }
 
     private void RefreshTexts()
     {
+        var gm = GameManager.Instance;
         if (puntos)
         {
-            int target = _flow ? _flow.targetCoins : (_gm ? _gm.targetCoins : 0);
+            int target = gm ? gm.targetCoins : 0;
             puntos.text = target > 0 ? $"Monedas: {puntosTotales}/{target}" : $"Monedas: {puntosTotales}";
         }
         if (enemigosText)
         {
-            int targetE = _flow ? _flow.targetEnemies : (_gm ? _gm.targetEnemies : 0);
+            int targetE = gm ? gm.targetEnemies : 0;
             enemigosText.text = targetE > 0 ? $"Enemigos: {enemigosEliminados}/{targetE}" : $"Enemigos: {enemigosEliminados}";
         }
     }
 
     // Métodos para conectar a botones del panel de pausa si prefieres centralizar en HUD
-    public void UI_Resume() { if (_gm) _gm.Resume(); else if (_flow) _flow.Resume(); }
-    public void UI_RestartLevel() { if (_gm) _gm.ResetLevel(); else if (_flow) _flow.ResetLevel(); }
+    public void UI_Resume() { if (GameManager.Instance) GameManager.Instance.Resume(); }
+    public void UI_RestartLevel() { if (GameManager.Instance) GameManager.Instance.ResetLevel(); }
     public void UI_ExitToMainMenu()
     {
         // Usa GameManager (fusionado) si existe; si no, deja que tu escena de menú haga el manejo

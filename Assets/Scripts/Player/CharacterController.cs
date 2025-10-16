@@ -30,6 +30,7 @@ public class CharacterController : MonoBehaviour
     [Header("Object References")]
     [SerializeField] public Weapon2D muzzle;
     [SerializeField] public LayerMask capaSuelo;
+    [SerializeField] public LayerMask deathMask;
     [SerializeField] public AudioClip audioSalto;
 
     private Animator animator;
@@ -50,16 +51,29 @@ public class CharacterController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        // Inputs centralizados aquí
+        // Pausa
+        if (Input.GetKeyDown(KeyCode.Escape) && GameManager.Instance)
+        {
+            GameManager.Instance.TogglePause();
+        }
+
+        // Movimiento / salto / ataque
         ProcesarMovimiento();
         ProcesarSalto();
         ProcesarAtaque();
     }
     void ProcesarAtaque()
     {
-        if (Input.GetKeyDown(KeyCode.F))
+        // Disparar arma
+        if (Input.GetKeyDown(KeyCode.R))
+        {
+            muzzle.TryFire();
+        }
+        // Golpe con espada (animacion)
+        if(Input.GetKeyUp(KeyCode.F))
         {
             animator.SetTrigger(isAttackingId);
-            muzzle.TryFire();
         }
     }
     bool EstaEnSuelo()
@@ -131,8 +145,28 @@ public class CharacterController : MonoBehaviour
         // Aseguramos que no quede atrapado si el estado necesita salir.
         StartCoroutine(ResetAttackedFlagSafeguard());
     }
+    private void OnCollisionEnter2D(Collision2D collision)
+    {
+        // Zona de muerte -> dispara evento de muerte del jugador y abre panel de muerte
+        if ((deathMask.value & (1 << collision.gameObject.layer)) != 0)
+        {
+            Debug.Log("Has muerto! Zona de muerte detectada.");
+            if (GameManager.Instance)
+            {
+                GameManager.Instance.TriggerPlayerDeath();
+            }
+            else
+            {
+                // Fallback si no hay GameManager
+                SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
+            }
+            return;
+        }
+    }
     private void OnTriggerEnter2D(Collider2D other)
     {
+        // Zona de muerte -> dispara evento de muerte del jugador y abre panel de muerte
+        
         // Filtrar por capa o tag
         if (!((enemyWeaponMask.value & (1 << other.gameObject.layer)) != 0)) return;
 

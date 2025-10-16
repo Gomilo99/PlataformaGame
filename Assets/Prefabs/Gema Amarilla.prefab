@@ -11,8 +11,8 @@ GameObject:
   - component: {fileID: 4934045122043198875}
   - component: {fileID: 4934045122043198874}
   - component: {fileID: 4934045122043198869}
-  - component: {fileID: 4934045122043198872}
   - component: {fileID: 4934045122043198873}
+  - component: {fileID: 4934045122043198872}
   m_Layer: 0
   m_Name: Gema Amarilla
   m_TagString: Untagged
@@ -108,20 +108,6 @@ Animator:
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
   m_WriteDefaultValuesOnDisable: 0
---- !u!114 &4934045122043198872
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4934045122043198868}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 9eb47b682ae0b5d48a70106c8f858652, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  valor: 25
-  sonidoMoneda: {fileID: 8300000, guid: 7b5001a2c49923c49bee0157e7e53338, type: 3}
 --- !u!61 &4934045122043198873
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -148,3 +134,17 @@ BoxCollider2D:
   serializedVersion: 2
   m_Size: {x: 1, y: 1}
   m_EdgeRadius: 0
+--- !u!114 &4934045122043198872
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4934045122043198868}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9eb47b682ae0b5d48a70106c8f858652, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  valor: 25
+  sonidoMoneda: {fileID: 8300000, guid: 7b5001a2c49923c49bee0157e7e53338, type: 3}

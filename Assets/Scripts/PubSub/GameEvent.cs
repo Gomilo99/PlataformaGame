@@ -9,4 +9,5 @@ public enum GameEvent
     GameResumed,
     LevelReset,
     WinConditionMet,
+    PlayerDied,
 }
