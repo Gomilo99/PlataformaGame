@@ -70,7 +70,7 @@ Este documento resume el funcionamiento completo del proyecto: arquitectura, con
 ## 5. Jugador (CharacterController)
 - Input centralizado (Update):
   - ESC → pausa.
-  - Horizontal → movimiento.
+  - Horizontal (teclas A y D) → movimiento.
   - Space → salto (con contador de saltos).
   - R → disparo (Weapon2D.TryFire()).
   - F → ataque (trigger de animación).
