@@ -27,6 +27,21 @@ public class GameManager : MonoBehaviour
     private bool won = false;
     private bool dead = false;
 
+    [Header("Condiciones de victoria")]
+    [Tooltip("Si está activo, la victoria puede depender de monedas (x/y).")]
+    public bool winByCoins = true;
+    [Tooltip("Si está activo, la victoria puede depender de enemigos (x/y).")]
+    public bool winByEnemies = true;
+    public enum WinLogic { AllEnabled, AnyEnabled }
+    [Tooltip("AllEnabled: deben cumplirse TODAS las condiciones activas. AnyEnabled: basta una.")]
+    public WinLogic winCombination = WinLogic.AllEnabled;
+    [Tooltip("Texto listo para UI con el progreso de condiciones en formato 'x/y'. (Solo números, sin etiquetas)")]
+    public string winConditionsText = string.Empty;
+    [Tooltip("Progreso de monedas en formato 'x/y'. (Solo números, sin etiquetas)")]
+    public string coinsProgressText = string.Empty;
+    [Tooltip("Progreso de enemigos en formato 'x/y'. (Solo números, sin etiquetas)")]
+    public string enemiesProgressText = string.Empty;
+
     [Header("Cálculo automático de metas")]
     [Tooltip("Si está activo, al iniciar se calculará automáticamente el objetivo de monedas.")]
     public bool autoComputeCoins = true;
@@ -63,6 +78,7 @@ public class GameManager : MonoBehaviour
         actualscene = SceneManager.GetActiveScene().buildIndex;
         // Calcula los objetivos al cargar la escena (antes de que la UI se muestre)
         ComputeLevelGoals();
+        UpdateWinProgressText();
     }
 
     private void OnEnable()
@@ -133,6 +149,7 @@ public class GameManager : MonoBehaviour
         SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
         // Reset contadores locales
         coinsCollected = 0; enemiesKilled = 0; won = false; paused = false; dead = false;
+        UpdateWinProgressText();
     }
 
     public void ExitToMainMenu()
@@ -185,21 +202,31 @@ public class GameManager : MonoBehaviour
     private void OnCoinCollected(int value)
     {
         coinsCollected += value;
+        UpdateWinProgressText();
         CheckWin();
     }
 
     private void OnEnemyKilled(int count)
     {
         enemiesKilled += count;
+        UpdateWinProgressText();
         CheckWin();
     }
 
     private void CheckWin()
     {
         if (won) return;
-        bool coinsOk = targetCoins <= 0 || coinsCollected >= targetCoins;
-        bool enemiesOk = targetEnemies <= 0 || enemiesKilled >= targetEnemies;
-        if (coinsOk && enemiesOk)
+
+        // Si no hay condiciones activas, no hay victoria automática
+        if (!winByCoins && !winByEnemies) return;
+
+    // Si el objetivo es 0 o menor, se considera cumplido (no bloquea la victoria)
+    bool coinsOk = !winByCoins || targetCoins <= 0 || (coinsCollected >= targetCoins);
+    bool enemiesOk = !winByEnemies || targetEnemies <= 0 || (enemiesKilled >= targetEnemies);
+
+        bool winNow = winCombination == WinLogic.AllEnabled ? (coinsOk && enemiesOk)
+                                                            : (coinsOk || enemiesOk);
+        if (winNow)
         {
             won = true;
             Time.timeScale = 0f;
@@ -273,5 +300,31 @@ public class GameManager : MonoBehaviour
         {
             Debug.Log($"[GameManager] Goals computed -> Coins target: {targetCoins} (mode {coinsGoalMode}), Enemies target: {targetEnemies}");
         }
+        UpdateWinProgressText();
+    }
+
+    private void UpdateWinProgressText()
+    {
+        System.Text.StringBuilder sb = new System.Text.StringBuilder();
+        bool first = true;
+        coinsProgressText = string.Empty;
+        enemiesProgressText = string.Empty;
+        if (winByCoins && targetCoins > 0)
+        {
+            if (!first) sb.Append("  |  ");
+            string t = $"{coinsCollected}/{targetCoins}";
+            sb.Append(t);
+            coinsProgressText = t;
+            first = false;
+        }
+        if (winByEnemies && targetEnemies > 0)
+        {
+            if (!first) sb.Append("  |  ");
+            string t = $"{enemiesKilled}/{targetEnemies}";
+            sb.Append(t);
+            enemiesProgressText = t;
+            first = false;
+        }
+        winConditionsText = sb.ToString();
     }
 }

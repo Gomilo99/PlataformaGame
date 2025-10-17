@@ -11,6 +11,12 @@ public class HUD : MonoBehaviour
     public TextMeshProUGUI puntos; // Monedas
     [Tooltip("Texto para enemigos eliminados (opcional).")]
     public TextMeshProUGUI enemigosText;
+    [Tooltip("Solo números 'x/y' de monedas (sin etiqueta). Opcional.")]
+    public TextMeshProUGUI monedasProgress;
+    [Tooltip("Solo números 'x/y' de enemigos (sin etiqueta). Opcional.")]
+    public TextMeshProUGUI enemigosProgress;
+    [Tooltip("Texto combinado de condiciones (p.ej. '3/5  |  1/2'). Opcional.")]
+    public TextMeshProUGUI condicionesVictoriaText;
     [Tooltip("Texto o indicador de Pausa (opcional).")]
     public TextMeshProUGUI pausaText;
 
@@ -109,10 +115,22 @@ public class HUD : MonoBehaviour
             int target = gm ? gm.targetCoins : 0;
             puntos.text = target > 0 ? $"Monedas: {puntosTotales}/{target}" : $"Monedas: {puntosTotales}";
         }
+        if (monedasProgress && gm)
+        {
+            monedasProgress.text = gm.coinsProgressText;
+        }
         if (enemigosText)
         {
             int targetE = gm ? gm.targetEnemies : 0;
             enemigosText.text = targetE > 0 ? $"Enemigos: {enemigosEliminados}/{targetE}" : $"Enemigos: {enemigosEliminados}";
+        }
+        if (enemigosProgress && gm)
+        {
+            enemigosProgress.text = gm.enemiesProgressText;
+        }
+        if (condicionesVictoriaText && gm)
+        {
+            condicionesVictoriaText.text = gm.winConditionsText;
         }
     }
 
