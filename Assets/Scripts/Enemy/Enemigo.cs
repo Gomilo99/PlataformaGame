@@ -57,14 +57,13 @@ public class Enemigo : MonoBehaviour
 
 
         Debug.Log("Golpeado por arma del jugador");
-        var weapon = other.gameObject.GetComponent<Bullet>();
-        if (!weapon)
+        if(other.gameObject.GetComponent<Bullet>() == null && other.gameObject.GetComponent<Weapon2D>() == null)
         {
-            Debug.LogWarning("El objeto que colisiona no tiene componente Bullet: " + other.gameObject.name);
+            Debug.LogWarning("El objeto que colisiona no tiene componente Weapon2D o Bullet: " + other.gameObject.name);
             return;
         }
         // Calcula daño (con reducción opcional si está habilitada)
-        float incomingDamage = weapon.GetDamage();
+        float incomingDamage = other.gameObject.GetComponent<Bullet>() == null ? other.gameObject.GetComponent<Weapon2D>().GetDamage() : other.gameObject.GetComponent<Bullet>().GetDamage();
         if (enableDamageMultiplierOnWeaponMask)
         {
             // damageMultiplier en [0..2]: 1 = 100% del daño, 0.5 = 50%, 2 = 200%, 0 = inmune

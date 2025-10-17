@@ -28,7 +28,7 @@ public class CharacterController : MonoBehaviour
     [SerializeField] public AudioClip sonidoAtacado;
 
     [Header("Object References")]
-    [SerializeField] public Weapon2D muzzle;
+    [SerializeField] public Muzzle2D muzzle;
     [SerializeField] public LayerMask capaSuelo;
     [SerializeField] public LayerMask deathMask;
     [SerializeField] public AudioClip audioSalto;

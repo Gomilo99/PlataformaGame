@@ -44,7 +44,7 @@ public class Player : MonoBehaviour
     [Header("Varios")]
     [SerializeField] private bool facingRight = true; // estado visual
     [SerializeField] private bool freezeZRotation = true;
-    [SerializeField] private Weapon2D weapon;
+    [SerializeField] private Muzzle2D weapon;
     
     
     public bool FacingRight => facingRight;

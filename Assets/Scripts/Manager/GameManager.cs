@@ -9,7 +9,7 @@ public class GameManager : MonoBehaviour
     public static GameManager Instance { get; private set; }
     public CharacterController player;
     public float vidas = 3;
-    public float VidasTotales;
+    private float VidasTotales;
     int actualscene;
 
     public enum CoinsGoalMode { Manual, ByValue, ByCount }
@@ -36,11 +36,9 @@ public class GameManager : MonoBehaviour
     [Tooltip("AllEnabled: deben cumplirse TODAS las condiciones activas. AnyEnabled: basta una.")]
     public WinLogic winCombination = WinLogic.AllEnabled;
     [Tooltip("Texto listo para UI con el progreso de condiciones en formato 'x/y'. (Solo números, sin etiquetas)")]
-    public string winConditionsText = string.Empty;
-    [Tooltip("Progreso de monedas en formato 'x/y'. (Solo números, sin etiquetas)")]
-    public string coinsProgressText = string.Empty;
+    [HideInInspector] public string coinsProgressText { get; private set; } = string.Empty;
     [Tooltip("Progreso de enemigos en formato 'x/y'. (Solo números, sin etiquetas)")]
-    public string enemiesProgressText = string.Empty;
+    [HideInInspector] public string enemiesProgressText { get; private set; } = string.Empty;
 
     [Header("Cálculo automático de metas")]
     [Tooltip("Si está activo, al iniciar se calculará automáticamente el objetivo de monedas.")]
@@ -224,8 +222,7 @@ public class GameManager : MonoBehaviour
     bool coinsOk = !winByCoins || targetCoins <= 0 || (coinsCollected >= targetCoins);
     bool enemiesOk = !winByEnemies || targetEnemies <= 0 || (enemiesKilled >= targetEnemies);
 
-        bool winNow = winCombination == WinLogic.AllEnabled ? (coinsOk && enemiesOk)
-                                                            : (coinsOk || enemiesOk);
+        bool winNow = winCombination == WinLogic.AllEnabled ? (coinsOk && enemiesOk) : (coinsOk || enemiesOk);
         if (winNow)
         {
             won = true;
@@ -305,26 +302,17 @@ public class GameManager : MonoBehaviour
 
     private void UpdateWinProgressText()
     {
-        System.Text.StringBuilder sb = new System.Text.StringBuilder();
-        bool first = true;
         coinsProgressText = string.Empty;
         enemiesProgressText = string.Empty;
         if (winByCoins && targetCoins > 0)
         {
-            if (!first) sb.Append("  |  ");
             string t = $"{coinsCollected}/{targetCoins}";
-            sb.Append(t);
             coinsProgressText = t;
-            first = false;
         }
         if (winByEnemies && targetEnemies > 0)
         {
-            if (!first) sb.Append("  |  ");
             string t = $"{enemiesKilled}/{targetEnemies}";
-            sb.Append(t);
             enemiesProgressText = t;
-            first = false;
         }
-        winConditionsText = sb.ToString();
     }
 }

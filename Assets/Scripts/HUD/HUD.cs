@@ -1,27 +1,25 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Data.SqlTypes;
 using TMPro;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class HUD : MonoBehaviour
 {
     public static HUD Instance { get; private set; }
     [Header("Textos HUD")]
-    [Tooltip("Texto para las monedas (puede reutilizarse el existente).")]
-    public TextMeshProUGUI puntos; // Monedas
-    [Tooltip("Texto para enemigos eliminados (opcional).")]
-    public TextMeshProUGUI enemigosText;
-    [Tooltip("Solo números 'x/y' de monedas (sin etiqueta). Opcional.")]
+    [Tooltip("Controlador de victoria por monedas 'x/y'.")]
     public TextMeshProUGUI monedasProgress;
-    [Tooltip("Solo números 'x/y' de enemigos (sin etiqueta). Opcional.")]
+    [Tooltip("Controlador de victoria por enemigos 'x/y'.")]
     public TextMeshProUGUI enemigosProgress;
-    [Tooltip("Texto combinado de condiciones (p.ej. '3/5  |  1/2'). Opcional.")]
-    public TextMeshProUGUI condicionesVictoriaText;
-    [Tooltip("Texto o indicador de Pausa (opcional).")]
-    public TextMeshProUGUI pausaText;
+    [Header("Contador de dinero")]
+    public TextMeshProUGUI moneyCountText;
+    [Tooltip("Objeto Vacio que contiene todos los elementos de UI en juego (monedas, enemigos, etc).")]
+    public GameObject uiElementsContainer;
 
     [Header("Contadores internos")]
-    public int puntosTotales = 0;
+    public int moneyCounter = 0;
     public int enemigosEliminados = 0;
 
     [Header("Paneles UI (Canvas)")]
@@ -35,6 +33,22 @@ public class HUD : MonoBehaviour
     {
         if (Instance == null) Instance = this;
         else if (Instance != this) { Debug.LogWarning("Más de un HUD en escena; manteniendo el primero."); return; }
+        if (!uiElementsContainer)
+        {
+            Debug.LogWarning("HUD: No se ha asignado uiElementsContainer en el inspector.");
+        }
+        if (!pausePanel)
+        {
+            Debug.LogWarning("HUD: No se ha asignado 'pausePanel' en el inspector.");
+        }
+        if (!winPanel)
+        {
+            Debug.LogWarning("HUD: No se ha asignado 'winPanel' en el inspector.");
+        }
+        if (!deathPanel)
+        {
+            Debug.LogWarning("HUD: No se ha asignado 'deathPanel' en el inspector.");
+        }
     }
 
     private void OnEnable()
@@ -64,7 +78,7 @@ public class HUD : MonoBehaviour
 
     private void HandleOnCoinCollected(int coinValue)
     {
-        puntosTotales += coinValue;
+        moneyCounter += coinValue;
         RefreshTexts();
     }
 
@@ -76,61 +90,50 @@ public class HUD : MonoBehaviour
 
     private void HandleOnGamePaused(bool _)
     {
-        if (pausePanel) pausePanel.SetActive(true);
-        if (pausaText) pausaText.gameObject.SetActive(true);
+        pausePanel.SetActive(true);
+        uiElementsContainer.SetActive(false);
     }
 
     private void HandleOnGameResumed(bool _)
     {
-        if (pausePanel) pausePanel.SetActive(false);
-        if (pausaText) pausaText.gameObject.SetActive(false);
+        pausePanel.SetActive(false);
+        uiElementsContainer.SetActive(true);
     }
 
     private void HandleOnLevelReset(bool _)
     {
-        puntosTotales = 0;
+        moneyCounter = 0;
         enemigosEliminados = 0;
         RefreshTexts();
-        if (pausePanel) pausePanel.SetActive(false);
-        if (winPanel) winPanel.SetActive(false);
-        if (deathPanel) deathPanel.SetActive(false);
-        if (pausaText) pausaText.gameObject.SetActive(false);
+        pausePanel.SetActive(false);
+        winPanel.SetActive(false);
+        deathPanel.SetActive(false);
     }
 
     private void HandleOnWin(bool _)
     {
-        if (winPanel) winPanel.SetActive(true);
+        winPanel.SetActive(true);
+        uiElementsContainer.SetActive(false);
     }
 
     private void HandleOnPlayerDied(bool _)
     {
-        if (deathPanel) deathPanel.SetActive(true);
+        deathPanel.SetActive(true);
+        uiElementsContainer.SetActive(false);
     }
 
     private void RefreshTexts()
     {
         var gm = GameManager.Instance;
-        if (puntos)
-        {
-            int target = gm ? gm.targetCoins : 0;
-            puntos.text = target > 0 ? $"Monedas: {puntosTotales}/{target}" : $"Monedas: {puntosTotales}";
-        }
+        moneyCountText.text = moneyCounter.ToString();
         if (monedasProgress && gm)
         {
             monedasProgress.text = gm.coinsProgressText;
         }
-        if (enemigosText)
-        {
-            int targetE = gm ? gm.targetEnemies : 0;
-            enemigosText.text = targetE > 0 ? $"Enemigos: {enemigosEliminados}/{targetE}" : $"Enemigos: {enemigosEliminados}";
-        }
+        
         if (enemigosProgress && gm)
         {
             enemigosProgress.text = gm.enemiesProgressText;
-        }
-        if (condicionesVictoriaText && gm)
-        {
-            condicionesVictoriaText.text = gm.winConditionsText;
         }
     }
 

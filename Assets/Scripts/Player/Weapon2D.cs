@@ -3,64 +3,34 @@ using UnityEngine;
 public class Weapon2D : MonoBehaviour
 {
     [Header("Refs")]
-    [SerializeField] private BulletPool pool;
     [SerializeField] private CharacterController player;    // para saber facingRight (o pásalo como bool)
-    [SerializeField] private Transform muzzle; // punto de salida de la bala (hijo del Player)
-
     [Header("Tuning")]
-    [SerializeField] private float bulletSpeed = 14f;
-    [SerializeField] private float bulletDamage = 1;
-    [SerializeField] private float fireCooldown = 0.2f;
-
-    private float nextFireTime;
-    private Vector3 initialLocalPos;
-    private Quaternion initialLocalRot;
+    [SerializeField] public float weaponDamage = 1;
+    [Tooltip("1 = normal damage, 0 = no damage, 2 = double damage")]
+    [SerializeField][Range(0f, 2f)] private float damageMultiplier = 1f;
+    [Header("Sounds")]
+    [SerializeField] private AudioClip attackSound;
+    private float _mulDamage;
 
     void Start()
     {
-        if (muzzle == null) muzzle = transform;
-        if (player == null || muzzle == null) return;
-
-        // Asegura que el muzzle sea hijo del Player y conserve su posición mundial actual
-        muzzle.SetParent(player.transform, true);
-
-        // Guarda la posición/rotación local para mantenerla fija relativa al Player
-        initialLocalPos = muzzle.localPosition;
-        initialLocalRot = muzzle.localRotation;
+        weaponDamage *= damageMultiplier;
+        _mulDamage = damageMultiplier;
     }
-
-    void LateUpdate()
+    void Update()
     {
-        // Fuerza la posición/rotación local constantes respecto al Player
-        muzzle.localPosition = initialLocalPos;
-        muzzle.localRotation = initialLocalRot;
+        if (damageMultiplier != _mulDamage)
+        {
+            weaponDamage *= damageMultiplier;
+            _mulDamage = damageMultiplier;
+        }
     }
-    void Awake()
+    public float GetDamage()
     {
-        muzzle = GetComponent<Transform>();
+        return weaponDamage;
     }
-    public void TryFire()
+    public void OnEnable()
     {
-        if (Time.time < nextFireTime) return;
-
-        var bullet = pool.Get();
-        if (bullet == null) return;
-
-        // dirección según tu facingRight; o calcula con mouse/aim si quieres
-        Vector2 dir = player != null && player.mirandoDerecha ? Vector2.right : Vector2.left;
-
-        bullet.Fire(
-            position: muzzle.position,
-            direction: dir,
-            customSpeed: bulletSpeed,
-            customDamage: bulletDamage,
-            onReturnToPool: pool.Return
-        );
-
-        nextFireTime = Time.time + fireCooldown;
-    }
-    public float GetBulletDamage()
-    {
-        return bulletDamage;
+        AudioManager.Instance.ReproducirSonido(attackSound);
     }
 }
