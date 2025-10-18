@@ -145,7 +145,7 @@ GameObject:
   - component: {fileID: 316203695}
   - component: {fileID: 316203694}
   m_Layer: 5
-  m_Name: Text (TMP) (1)
+  m_Name: Creditos
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -604,7 +604,7 @@ GameObject:
   - component: {fileID: 1736218008}
   - component: {fileID: 1736218007}
   m_Layer: 5
-  m_Name: Text (TMP)
+  m_Name: Titulo
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -627,8 +627,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0.000038146973, y: 124.59199}
-  m_SizeDelta: {x: 906.18, y: 249.184}
+  m_AnchoredPosition: {x: 2.641, y: 140.436}
+  m_SizeDelta: {x: 1201.927, y: 444.589}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1736218007
 MonoBehaviour:
@@ -665,7 +665,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: Juegazo
+  m_text: The Legend of Prietro
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 7e21847fcbabf8444a976a236aeafa39, type: 2}
   m_sharedMaterial: {fileID: 5358075737690398469, guid: 7e21847fcbabf8444a976a236aeafa39, type: 2}
@@ -728,7 +728,7 @@ MonoBehaviour:
   m_VertexBufferAutoSizeReduction: 0
   m_useMaxVisibleDescender: 1
   m_pageToDisplay: 1
-  m_margin: {x: 0, y: 0, z: 0, w: 0}
+  m_margin: {x: 2.6405642, y: 2.6404722, z: -0.00000013192899, w: 2.6407242}
   m_isUsingLegacyAnimationComponent: 0
   m_isVolumetricText: 0
   m_hasFontAssetChanged: 0

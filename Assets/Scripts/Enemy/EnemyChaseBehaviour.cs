@@ -41,6 +41,7 @@ public class EnemyChaseBehaviour : MonoBehaviour
     [Tooltip("Offset vertical adicional para evaluar la ventana de ataque")]
     [SerializeField] private float attackVerticalCenterOffset = 0f;
     [Tooltip("Tiempo fijo tras disparar el ataque antes de liberar el estado de ataque")]
+    private int attackingAnimationSelector = 1;
 
     [Header("Refs")]
     [SerializeField] private EnemyPatrol2D patrol;
@@ -71,7 +72,7 @@ public class EnemyChaseBehaviour : MonoBehaviour
         // Guardar constraints iniciales para restaurarlas después del ataque
         savedConstraints = rb.constraints;
     }
-
+    
     void Start()
     {
         if (!player)
@@ -169,6 +170,13 @@ public class EnemyChaseBehaviour : MonoBehaviour
 
         nextAttackTime = Time.time + attackCooldown;
         animator.SetTrigger(Enemigo.attackingTrigger);
+        animator.SetInteger("attackingAnimation", attackingAnimationSelector);
+        if(attackingAnimationSelector > 3)
+        {
+            attackingAnimationSelector = 1;
+        }else{
+            attackingAnimationSelector++;
+        }
         AudioManager.Instance.ReproducirSonido(attackSound);
         
         // Esperar a que concluya la animación de ataque o agotar timeout

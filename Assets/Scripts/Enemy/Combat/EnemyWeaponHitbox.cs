@@ -8,7 +8,7 @@ using UnityEngine;
 [RequireComponent(typeof(Collider2D))]
 public class EnemyWeaponHitbox : MonoBehaviour
 {
-    [SerializeField] public float Damage { get; private set; } = 1f;
+    [SerializeField] public float Damage = 1f;
     [SerializeField] private LayerMask playerMask; // capas válidas para golpear
     [SerializeField] private AudioClip sonidoAtaque;
 
