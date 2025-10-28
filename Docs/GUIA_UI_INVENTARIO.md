@@ -141,21 +141,59 @@ Datos de ítems:
 
 UI:
 1. Canvas In-Game → Panel Inventario (puede estar oculto y abrirse con una tecla o botón).
-2. Dentro, un GameObject con GridLayoutGroup (por ejemplo 4 cols x 3 filas).
-3. Crea un prefab `Slot` con:
-   - Image de fondo (para hover),
-   - Image de icono (hijo),
-   - Text (cantidad) (u TextMeshProUGUI si usas TMP).
+2. Dentro, un GameObject con GridLayoutGroup (por ejemplo 4 cols x 3 filas). Para inventarios largos, colócalo como "Content" de un ScrollRect con Viewport.
+3. Crea un prefab `Slot` con exactamente dos hijos:
+   - Image hijo llamado "icono" (mostrará el sprite),
+   - TextMeshProUGUI hijo llamado "texto" (mostrará el nombre y, si corresponde, la cantidad: "Nombre xN").
+   - El objeto raíz del Slot puede tener una Image de fondo para hover (raycastTarget=true).
 4. Añade `InventoryUI` al Panel, asigna:
    - model: tu `InventoryModel` creado,
-   - gridRoot: el contenedor con GridLayout,
-   - slotPrefab: tu prefab Slot.
+   - gridRoot: el contenedor con GridLayout (el Content del ScrollRect si usas scroll),
+   - slotPrefab: tu prefab Slot,
+   - contextMenu: referencia al prefab/panel del menú contextual (opcional),
+   - playerStats: referencia al `PlayerStats` si quieres que Consumir/Equipar afecte al jugador.
 
 Poblar/Probar:
 - Desde cualquier script de juego, llama `model.Add(itemData, cantidad)` para ver aparecer los ítems en la UI.
 - `InventoryUI` re-renderiza cuando el modelo emite `OnChanged`.
+- Si el nombre no se actualiza: asegúrate de que tu Slot tenga el hijo TMP llamado exactamente `texto` (no `Text` de UI clásica). El script ya busca ese hijo por nombre y usa TextMeshProUGUI.
 
-### 7) Variaciones útiles
+### 7) Paginación/scroll estilo "Zelda"
+- Si el número de ítems supera el espacio visible, usa un ScrollRect (Viewport + Content) para desplazar el inventario hacia abajo y ver más filas.
+- Alternativa: botones "Subir/Bajar" que cambian `Content.anchoredPosition` en saltos del tamaño de una fila (paginación). Calcula el alto por fila con el `GridLayoutGroup.cellSize.y + spacing.y`.
+- Tip: Ajusta `Content Size Fitter` (Preferred Size) sobre el contenedor de slots para que su altura crezca automáticamente con el número de elementos.
+
+### 8) Menú contextual por ítem
+- Usa el componente `InventoryContextMenu` con referencias a: título (TMP), descripción (TMP), botones Consumir/Equipar/Botar y un panel raíz (RectTransform).
+- Lógica de disponibilidad:
+   - Consumir: solo para categoría Consumible.
+   - Equipar: solo para categoría Arma.
+   - Botar: desactivado para categoría Clave.
+- El panel se cierra si haces clic fuera. Se posiciona cerca del cursor.
+- Acciones integradas en `InventoryUI`:
+   - `Consume(index)`: aplica el consumible vía `PlayerStats.ApplyConsumable` y reduce el stack en 1.
+   - `Equip(index)`: equipa el arma vía `PlayerStats.EquipWeapon`.
+   - `Drop(index)`: elimina 1 unidad del stack (no permitido para Claves).
+
+### 9) Tipos de ítems y datos
+- `ItemData` ahora incluye:
+   - `category`: Consumable, Weapon, Key.
+   - `description`: texto breve ("mejora salud maxima +5", "Arma poderosa. Daño 10", "Llave especial del oráculo").
+   - Para consumibles: `consumableKind` (HealthDelta/MaxHealthDelta/AttackDelta) y `amount` (positivo o negativo según aplique).
+   - Para armas: `weaponAttack`.
+- Reglas de stack:
+   - Armas y Claves: usa `maxStack = 1` para que no se apilen.
+   - Consumibles: define `maxStack` según necesites (p.ej., 5/20/99).
+
+### 10) Panel de estadísticas del jugador (izquierda)
+- Añade `PlayerStats` al jugador (maxHealth, currentHealth, baseAttack, arma equipada).
+- Añade `PlayerStatsUI` en el panel izquierdo con campos:
+   - Sprite del personaje (Image),
+   - Vida (TextMeshProUGUI en enteros: `Vida: actual/max`),
+   - Arma equipada (Image + nombre),
+   - Ataque total (base + arma).
+- `PlayerStatsUI` se suscribe a `OnStatsChanged` de `PlayerStats` para refrescar automáticamente.
+- Ubicación sugerida: panel izquierdo = perfil/estadísticas; panel derecho = inventario (ScrollRect con GridLayoutGroup).
 - Mostrar/ocultar el inventario con una tecla: activa/desactiva el Panel y pausa o no el juego según prefieras.
 - Usar TextMeshPro: cambia los componentes `Text` por `TextMeshProUGUI` y ajusta `InventoryUI` para encontrarlos (o referencia explícita por script).
 - Drag & drop: añade interfaces `IBeginDragHandler`, `IDragHandler`, `IEndDragHandler` a `InventoryUISlot` y una capa visual para el icono arrastrado.
@@ -170,11 +208,11 @@ Poblar/Probar:
 - El HUD expone `UI_Resume`, `UI_RestartLevel`, `UI_ExitToMainMenu` para conectar botones.
 - HUD escucha eventos (pausa/resume/level reset/coin/enemy) y actualiza textos.
 
-### 10) Checklist rápido
+### 11) Checklist rápido
 - [ ] Scenes en Build Settings (MainMenu, Level_01)
 - [ ] Canvas MainMenu con botones y `MainMenuController`
 - [ ] Canvas Pausa con `PauseMenuController` y `PauseInput` en escena
-- [ ] InventoryModel asset, `InventoryUI` configurado y slotPrefab hecho
+- [ ] InventoryModel asset, `InventoryUI` configurado y slotPrefab hecho (hijos: `icono`, `texto`)
 - [ ] EventSystem presente en escenas con UI
 
 ---

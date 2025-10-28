@@ -1,3 +1,4 @@
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -10,11 +11,14 @@ public class PlayerHealthBar : MonoBehaviour
 {
     [SerializeField] private Image fillImage; // si no se asigna, usa el Image del mismo GO
     [SerializeField] private int maxLives = 5; // vidas máximas visuales
+    [SerializeField] private int actualLives;
+    [SerializeField] private TextMeshProUGUI LivesText;
 
     private void Awake()
     {
         if (!fillImage) fillImage = GetComponent<Image>();
         UpdateFill(GameManager.Instance != null ? (int)GameManager.Instance.vidas : maxLives);
+        actualLives = GameManager.Instance != null ? (int)GameManager.Instance.vidas : maxLives;
     }
 
     private void OnEnable()
@@ -32,12 +36,14 @@ public class PlayerHealthBar : MonoBehaviour
     private void OnLivesChangedAfterLoss(int remaining)
     {
         UpdateFill(remaining);
+
     }
 
     private void OnLivesChangedAfterGain(int beforeGain)
     {
         // GameManager publica el valor antes de sumar; sumamos 1 para el nuevo total visible
         UpdateFill(beforeGain + 1);
+
     }
 
     private void UpdateFill(int currentLives)

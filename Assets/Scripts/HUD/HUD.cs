@@ -61,8 +61,18 @@ public class HUD : MonoBehaviour
         EventBus<bool>.Subscribe(GameEvent.LevelReset, HandleOnLevelReset);
         EventBus<bool>.Subscribe(GameEvent.WinConditionMet, HandleOnWin);
         EventBus<bool>.Subscribe(GameEvent.PlayerDied, HandleOnPlayerDied);
+        // Progreso vía eventos de texto (x/y)
+        EventBus<string>.Subscribe(GameEvent.CoinsProgressUpdated, HandleOnCoinsProgressUpdated);
+        EventBus<string>.Subscribe(GameEvent.EnemiesProgressUpdated, HandleOnEnemiesProgressUpdated);
 
-        RefreshTexts();
+        // Inicializar textos con el estado actual si ya existe GameManager
+        var gm = GameManager.Instance;
+        RefreshTexts(); // contador de dinero
+        if (gm)
+        {
+            if (monedasProgress) monedasProgress.text = gm.coinsProgressText;
+            if (enemigosProgress) enemigosProgress.text = gm.enemiesProgressText;
+        }
     }
 
     private void OnDisable()
@@ -74,6 +84,8 @@ public class HUD : MonoBehaviour
         EventBus<bool>.Unsubscribe(GameEvent.LevelReset, HandleOnLevelReset);
         EventBus<bool>.Unsubscribe(GameEvent.WinConditionMet, HandleOnWin);
         EventBus<bool>.Unsubscribe(GameEvent.PlayerDied, HandleOnPlayerDied);
+        EventBus<string>.Unsubscribe(GameEvent.CoinsProgressUpdated, HandleOnCoinsProgressUpdated);
+        EventBus<string>.Unsubscribe(GameEvent.EnemiesProgressUpdated, HandleOnEnemiesProgressUpdated);
     }
 
     private void HandleOnCoinCollected(int coinValue)
@@ -122,19 +134,26 @@ public class HUD : MonoBehaviour
         uiElementsContainer.SetActive(false);
     }
 
+    private void HandleOnCoinsProgressUpdated(string progress)
+    {
+        if (monedasProgress != null)
+        {
+            monedasProgress.text = progress ?? string.Empty; // Espera formato "x/y" sin etiqueta
+        }
+    }
+
+    private void HandleOnEnemiesProgressUpdated(string progress)
+    {
+        if (enemigosProgress != null)
+        {
+            enemigosProgress.text = progress ?? string.Empty; // Espera formato "x/y" sin etiqueta
+        }
+    }
+
     private void RefreshTexts()
     {
-        var gm = GameManager.Instance;
-        moneyCountText.text = moneyCounter.ToString();
-        if (monedasProgress && gm)
-        {
-            monedasProgress.text = gm.coinsProgressText;
-        }
-        
-        if (enemigosProgress && gm)
-        {
-            enemigosProgress.text = gm.enemiesProgressText;
-        }
+        // Solo actualiza el contador de dinero inmediato; el progreso (x/y) llega por eventos
+        if (moneyCountText) moneyCountText.text = moneyCounter.ToString();
     }
 
     // Métodos para conectar a botones del panel de pausa si prefieres centralizar en HUD

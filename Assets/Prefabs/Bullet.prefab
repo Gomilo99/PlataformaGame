@@ -143,7 +143,7 @@ MonoBehaviour:
   enemyTag: Enemigo
   enemyLayers:
     serializedVersion: 2
-    m_Bits: 512
+    m_Bits: 576
   impactTriggerId: ImpactedBall
   impactReturnDelay: 0.2
   collisionSound: {fileID: 8300000, guid: c2d6e842baa3837479ed198a00ad6e5a, type: 3}

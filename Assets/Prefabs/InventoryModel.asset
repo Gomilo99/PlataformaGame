@@ -1,0 +1,88 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ae2d6f178ba1a1b4887cfad384c9ce4a, type: 3}
+  m_Name: InventoryModel
+  m_EditorClassIdentifier: 
+  capacity: 12
+  slots:
+  - item:
+      id: food
+      displayName: Manzana
+      icon: {fileID: 176453526, guid: 826f21ea1146a75459aa2d27d5ca30c4, type: 3}
+      maxStack: 99
+    count: 1
+  - item:
+      id: food
+      displayName: Sushi
+      icon: {fileID: -221208891, guid: 826f21ea1146a75459aa2d27d5ca30c4, type: 3}
+      maxStack: 99
+    count: 2
+  - item:
+      id: food
+      displayName: Cerveza
+      icon: {fileID: 1820344326, guid: 826f21ea1146a75459aa2d27d5ca30c4, type: 3}
+      maxStack: 99
+    count: 2
+  - item:
+      id: 
+      displayName: 
+      icon: {fileID: 0}
+      maxStack: 99
+    count: 0
+  - item:
+      id: 
+      displayName: 
+      icon: {fileID: 0}
+      maxStack: 99
+    count: 0
+  - item:
+      id: 
+      displayName: 
+      icon: {fileID: 0}
+      maxStack: 99
+    count: 0
+  - item:
+      id: 
+      displayName: 
+      icon: {fileID: 0}
+      maxStack: 99
+    count: 0
+  - item:
+      id: 
+      displayName: 
+      icon: {fileID: 0}
+      maxStack: 99
+    count: 0
+  - item:
+      id: 
+      displayName: 
+      icon: {fileID: 0}
+      maxStack: 99
+    count: 0
+  - item:
+      id: 
+      displayName: 
+      icon: {fileID: 0}
+      maxStack: 99
+    count: 0
+  - item:
+      id: 
+      displayName: 
+      icon: {fileID: 0}
+      maxStack: 99
+    count: 0
+  - item:
+      id: 
+      displayName: 
+      icon: {fileID: 0}
+      maxStack: 99
+    count: 0

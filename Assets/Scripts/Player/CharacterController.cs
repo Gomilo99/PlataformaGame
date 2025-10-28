@@ -20,6 +20,14 @@ public class CharacterController : MonoBehaviour
     [Header("Jumping Parameters")]
     [SerializeField] public float fuerzaSalto = 5;
     [SerializeField] public int saltosMax;
+    [Tooltip("Distancia vertical desde la base del collider para comprobar si estamos en suelo (OverlapBox).")]
+    [SerializeField] private float groundCheckDistance = 0.08f;
+    [Tooltip("Multiplicador del ancho del box usado en la comprobación de suelo (evita falsos negativos en los bordes).")]
+    [SerializeField] private float groundCheckWidthMultiplier = 0.9f;
+    [Tooltip("Tiempo en segundos tras salir del suelo durante el cual aún se permite saltar (coyote time).")]
+    [SerializeField] private float coyoteTime = 0.12f;
+    [Tooltip("Tiempo en segundos durante el cual un pulso de salto previo al aterrizaje se recuerda (jump buffer).")]
+    [SerializeField] private float jumpBufferTime = 0.12f;
 
     [Header("Hit Parameters")]
     [SerializeField] public float fuerzaGolpe;
@@ -37,6 +45,10 @@ public class CharacterController : MonoBehaviour
     private int saltosRestantes;
     private new Rigidbody2D rigidbody;
     private BoxCollider2D boxCollider;
+    // Estado para coyote time / jump buffer
+    private float _lastGroundedTime = -10f;
+    private float _lastJumpPressedTime = -10f;
+    private bool _wasGrounded = false;
     
     private bool puedeMoverse = true;
 
@@ -59,8 +71,8 @@ public class CharacterController : MonoBehaviour
         }
 
         // Movimiento / salto / ataque
-        ProcesarMovimiento();
         ProcesarSalto();
+        ProcesarMovimiento();
         ProcesarAtaque();
     }
     void ProcesarAtaque()
@@ -68,30 +80,69 @@ public class CharacterController : MonoBehaviour
         // Disparar arma
         if (Input.GetKeyDown(KeyCode.R))
         {
-            muzzle.TryFire();
+            if (muzzle != null) muzzle.TryFire();
         }
         // Golpe con espada (animacion)
-        if(Input.GetKeyUp(KeyCode.F))
+        if (Input.GetKeyUp(KeyCode.F))
         {
             animator.SetTrigger(isAttackingId);
         }
     }
-    bool EstaEnSuelo()
-    {
-        RaycastHit2D raycastHit = Physics2D.BoxCast(boxCollider.bounds.center, new Vector2(boxCollider.bounds.size.x, boxCollider.bounds.size.y), 0f, Vector2.down, 0.2f, capaSuelo);
-        return raycastHit.collider != null;
-    }
+
     void ProcesarSalto()
     {
-        if (EstaEnSuelo()) saltosRestantes = saltosMax;
-        if (Input.GetKeyDown(KeyCode.Space) && saltosRestantes > 0)
+        // Registrar pulsación de salto (para jump buffer)
+        if (Input.GetKeyDown(KeyCode.Space))
         {
-            saltosRestantes--;
+            _lastJumpPressedTime = Time.time;
+        }
+
+        bool grounded = EstaEnSuelo();
+        if (grounded)
+        {
+            _lastGroundedTime = Time.time;
+            // Si acabamos de aterrizar (transición), restaurar saltos
+            if (!_wasGrounded)
+            {
+                saltosRestantes = saltosMax;
+            }
+        }
+
+        // Ejecutar salto si se cumple cualquiera de las condiciones:
+        // - Hay saltos disponibles (double jump)
+        // - Estamos dentro del coyote time
+        bool canUseCoyote = (Time.time - _lastGroundedTime) <= coyoteTime;
+        bool jumpBuffered = (Time.time - _lastJumpPressedTime) <= jumpBufferTime;
+
+        if (jumpBuffered && (saltosRestantes > 0 || canUseCoyote))
+        {
+            // Consumir buffer
+            _lastJumpPressedTime = -10f;
+
+            // Realizar salto
+            saltosRestantes = Mathf.Max(0, saltosRestantes - 1);
             animator.SetTrigger(isJumpingId);
+            // Reiniciar velocidad vertical para saltos consistentes
             rigidbody.velocity = new Vector2(rigidbody.velocity.x, 0f);
             rigidbody.AddForce(Vector2.up * fuerzaSalto, ForceMode2D.Impulse);
-            AudioManager.Instance.ReproducirSonido(audioSalto);
+            if (AudioManager.Instance) AudioManager.Instance.ReproducirSonido(audioSalto);
         }
+
+        _wasGrounded = grounded;
+    }
+
+    bool EstaEnSuelo()
+    {
+        // Usar OverlapBox justo por debajo del collider para evitar interferencias con el propio collider
+        Vector2 boxCenter = boxCollider.bounds.center;
+        float halfHeight = boxCollider.bounds.extents.y;
+        float halfWidth = boxCollider.bounds.extents.x * groundCheckWidthMultiplier;
+
+        Vector2 checkCenter = boxCenter + Vector2.down * (halfHeight + groundCheckDistance);
+        Vector2 checkSize = new Vector2(halfWidth * 2f, groundCheckDistance * 2f);
+
+        Collider2D hit = Physics2D.OverlapBox(checkCenter, checkSize, 0f, capaSuelo);
+        return hit != null;
     }
     void ProcesarMovimiento()
     {

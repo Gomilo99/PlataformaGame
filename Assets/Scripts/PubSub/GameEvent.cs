@@ -9,5 +9,7 @@ public enum GameEvent
     GameResumed,
     LevelReset,
     WinConditionMet,
+    CoinsProgressUpdated,
+    EnemiesProgressUpdated,
     PlayerDied,
 }

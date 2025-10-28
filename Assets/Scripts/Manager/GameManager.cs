@@ -11,7 +11,6 @@ public class GameManager : MonoBehaviour
     public float vidas = 3;
     private float VidasTotales;
     int actualscene;
-
     public enum CoinsGoalMode { Manual, ByValue, ByCount }
     [Header("Progreso y metas")]
     [Tooltip("Total de monedas requeridas para ganar (0 = ignorar). Si autoComputeCoins está activo, este valor será reemplazado al inicio.")]
@@ -20,9 +19,6 @@ public class GameManager : MonoBehaviour
     public int targetEnemies = 0;
     private int coinsCollected = 0;
     private int enemiesKilled = 0;
-
-    // Paneles UI se controlan desde HUD; GameManager no activa/desactiva UI
-
     private bool paused = false;
     private bool won = false;
     private bool dead = false;
@@ -148,6 +144,9 @@ public class GameManager : MonoBehaviour
         // Reset contadores locales
         coinsCollected = 0; enemiesKilled = 0; won = false; paused = false; dead = false;
         UpdateWinProgressText();
+        // Publicar progreso inicial tras reset (x/target)
+        EventBus<string>.Publish(GameEvent.CoinsProgressUpdated, coinsProgressText);
+        EventBus<string>.Publish(GameEvent.EnemiesProgressUpdated, enemiesProgressText);
     }
 
     public void ExitToMainMenu()
@@ -298,6 +297,9 @@ public class GameManager : MonoBehaviour
             Debug.Log($"[GameManager] Goals computed -> Coins target: {targetCoins} (mode {coinsGoalMode}), Enemies target: {targetEnemies}");
         }
         UpdateWinProgressText();
+        // Publicar progreso inicial al arrancar
+        EventBus<string>.Publish(GameEvent.CoinsProgressUpdated, coinsProgressText);
+        EventBus<string>.Publish(GameEvent.EnemiesProgressUpdated, enemiesProgressText);
     }
 
     private void UpdateWinProgressText()
@@ -314,5 +316,8 @@ public class GameManager : MonoBehaviour
             string t = $"{enemiesKilled}/{targetEnemies}";
             enemiesProgressText = t;
         }
+        // Emitir eventos de cambio de progreso cuando se recalcula
+        EventBus<string>.Publish(GameEvent.CoinsProgressUpdated, coinsProgressText);
+        EventBus<string>.Publish(GameEvent.EnemiesProgressUpdated, enemiesProgressText);
     }
 }

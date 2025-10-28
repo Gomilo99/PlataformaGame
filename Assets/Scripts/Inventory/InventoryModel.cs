@@ -79,4 +79,22 @@ public class InventoryModel : ScriptableObject
         if (changed) OnChanged?.Invoke();
         return changed;
     }
+
+    public InventoryModel.Slot GetSlot(int index)
+    {
+        if (index < 0 || index >= slots.Count) return null;
+        return slots[index];
+    }
+
+    public bool RemoveAt(int index, int amount = 1)
+    {
+        if (index < 0 || index >= slots.Count || amount <= 0) return false;
+        var s = slots[index];
+        if (s.item == null || s.count <= 0) return false;
+        int take = Mathf.Min(s.count, amount);
+        s.count -= take;
+        if (s.count <= 0) { s.item = null; s.count = 0; }
+        OnChanged?.Invoke();
+        return true;
+    }
 }
