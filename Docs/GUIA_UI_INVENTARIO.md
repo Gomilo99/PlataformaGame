@@ -137,7 +137,8 @@ Modelo:
 - Define capacidad (p.ej. 12).
 
 Datos de ítems:
-- `ItemData` (clase serializable simple). Puedes convertir a ScriptableObject si necesitas catálogos grandes.
+- `ItemData` (ScriptableObject) con CreateAssetMenu: Right Click → Create → PlataformaGame → Inventory → Item.
+   - Rellena: id, displayName, description, icon, category, maxStack, etc.
 
 UI:
 1. Canvas In-Game → Panel Inventario (puede estar oculto y abrirse con una tecla o botón).
@@ -157,6 +158,19 @@ Poblar/Probar:
 - Desde cualquier script de juego, llama `model.Add(itemData, cantidad)` para ver aparecer los ítems en la UI.
 - `InventoryUI` re-renderiza cuando el modelo emite `OnChanged`.
 - Si el nombre no se actualiza: asegúrate de que tu Slot tenga el hijo TMP llamado exactamente `texto` (no `Text` de UI clásica). El script ya busca ese hijo por nombre y usa TextMeshProUGUI.
+
+### 6.1) Integración con el juego: Runtime + Pickups
+- Añade a la escena un `InventoryRuntime` y asigna el `InventoryModel` que usará el nivel.
+- Crea pickups en el mundo:
+   1) Crea un GameObject con sprite del ítem.
+   2) Añade `InventoryPickup2D` y un `Collider2D` (trigger=true).
+   3) Asigna el `ItemData` (asset) y la cantidad.
+   4) Al entrar el jugador (tag=Player), se añade al inventario y opcionalmente se destruye el pickup.
+- Test desde editor:
+   - En `InventoryRuntime`, usa el campo `_testItem` y el menú contextual (clic derecho en el componente) →
+      - Test/Add Selected Item (1)
+      - Test/Remove Selected Item (1)
+   - Esto llama internamente a `model.Add`/`model.Remove`.
 
 ### 7) Paginación/scroll estilo "Zelda"
 - Si el número de ítems supera el espacio visible, usa un ScrollRect (Viewport + Content) para desplazar el inventario hacia abajo y ver más filas.

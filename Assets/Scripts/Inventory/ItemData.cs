@@ -1,10 +1,11 @@
 using UnityEngine;
 
 /// <summary>
-/// Datos de ítem. Define categoría, descripción y datos para aplicar efectos/equipar.
+/// Datos de ítem como ScriptableObject (crea assets desde el editor).
+/// Define categoría, descripción y datos para aplicar efectos/equipar.
 /// </summary>
-[System.Serializable]
-public class ItemData
+[CreateAssetMenu(menuName = "Inventory/Item", fileName = "Item_XXX")]
+public class ItemData : ScriptableObject
 {
     public string id;
     public string displayName;
@@ -21,6 +22,10 @@ public class ItemData
 
     // Arma
     public int weaponAttack = 0;
+
+    [Header("UI")]
+    [Tooltip("Prefab opcional de vista de slot para este ítem. Si se asigna, reemplaza el slotPrefab por defecto.")]
+    public GameObject slotViewPrefab;
 }
 
 public enum ItemCategory { Consumable, Weapon, Key }

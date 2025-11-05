@@ -8,8 +8,6 @@ public class GameManager : MonoBehaviour
     public HUD hud;
     public static GameManager Instance { get; private set; }
     public CharacterController player;
-    public float vidas = 3;
-    private float VidasTotales;
     int actualscene;
     public enum CoinsGoalMode { Manual, ByValue, ByCount }
     [Header("Progreso y metas")]
@@ -60,7 +58,6 @@ public class GameManager : MonoBehaviour
     public string mainMenuSceneName = "MainMenu";
     void Awake()
     {
-        VidasTotales = vidas;
         if (Instance == null)
         {
             Instance = this;
@@ -79,41 +76,27 @@ public class GameManager : MonoBehaviour
     {
         EventBus<int>.Subscribe(GameEvent.CoinCollected, OnCoinCollected);
         EventBus<int>.Subscribe(GameEvent.EnemyKilled, OnEnemyKilled);
+        EventBus<int>.Subscribe(GameEvent.HealthChanged, OnHealthChanged);
     }
 
     private void OnDisable()
     {
         EventBus<int>.Unsubscribe(GameEvent.CoinCollected, OnCoinCollected);
         EventBus<int>.Unsubscribe(GameEvent.EnemyKilled, OnEnemyKilled);
+        EventBus<int>.Unsubscribe(GameEvent.HealthChanged, OnHealthChanged);
     }
 
-    private void Update()
+    // La salud/vidas se manejan en PlayerStats. Este GameManager solo reacciona por eventos.
+    public void OpenInventory()
     {
-        // Input centralizado en CharacterController.
-        // Mantener vacío para lógica de frame del GameManager.
+        Time.timeScale = 0f;
+        EventBus<bool>.Publish(GameEvent.InventoryOpened, true);
     }
-
-    public void PerderVida(float dano)
+    public void CloseInventory()
     {
-        vidas -= dano;
-        if (vidas == 0)
-        {
-            //Reiniciar Nivel
-            Debug.Log("Game Over");
-            SceneManager.LoadScene(actualscene);
-        }
-        EventBus<int>.Publish(GameEvent.VidaPerdida, (int)vidas);
+        Time.timeScale = 1f;
+        EventBus<bool>.Publish(GameEvent.InventoryClosed, true);
     }
-    public bool GanarVida()
-    {
-        if (vidas == VidasTotales) return false;
-
-        EventBus<int>.Publish(GameEvent.VidaGanada, (int)vidas);
-        vidas += 1;
-        return true;
-    }
-
-    // --- Lógica fusionada de GameFlowManager ---
     public void TogglePause()
     {
         if (won) return;
@@ -160,11 +143,11 @@ public class GameManager : MonoBehaviour
 
     public void QuitGame()
     {
-#if UNITY_EDITOR
-        UnityEditor.EditorApplication.isPlaying = false;
-#else
-        Application.Quit();
-#endif
+    #if UNITY_EDITOR
+            UnityEditor.EditorApplication.isPlaying = false;
+    #else
+            Application.Quit();
+    #endif
     }
 
     /*
@@ -210,6 +193,14 @@ public class GameManager : MonoBehaviour
         CheckWin();
     }
 
+    private void OnHealthChanged(int current)
+    {
+        if (current <= 0)
+        {
+            TriggerPlayerDeath();
+        }
+    }
+
     private void CheckWin()
     {
         if (won) return;
@@ -243,7 +234,6 @@ public class GameManager : MonoBehaviour
     private void ComputeLevelGoals()
     {
     var scene = SceneManager.GetActiveScene();
-    var roots = scene.GetRootGameObjects();
 
         if (autoComputeCoins)
         {

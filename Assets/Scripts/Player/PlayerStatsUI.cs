@@ -15,15 +15,17 @@ public class PlayerStatsUI : MonoBehaviour
 
     private void OnEnable()
     {
-        if (stats != null) stats.OnStatsChanged += Refresh;
-        Refresh();
+        EventBus<bool>.Subscribe(GameEvent.PlayerStatsChanged, OnPlayerStatsChanged);
     }
 
     private void OnDisable()
     {
-        if (stats != null) stats.OnStatsChanged -= Refresh;
+        EventBus<bool>.Unsubscribe(GameEvent.PlayerStatsChanged, OnPlayerStatsChanged);
     }
-
+    private void OnPlayerStatsChanged(bool obj)
+    {
+        Refresh();
+    }
     public void Refresh()
     {
         if (stats == null) return;

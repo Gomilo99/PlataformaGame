@@ -12,4 +12,9 @@ public enum GameEvent
     CoinsProgressUpdated,
     EnemiesProgressUpdated,
     PlayerDied,
+    InventoryOpened,
+    InventoryClosed,
+    PlayerStatsChanged,
+    HealthChanged,
+    WeaponEquipped,
 }

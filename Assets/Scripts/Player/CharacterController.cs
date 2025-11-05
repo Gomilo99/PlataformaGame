@@ -40,6 +40,8 @@ public class CharacterController : MonoBehaviour
     [SerializeField] public LayerMask capaSuelo;
     [SerializeField] public LayerMask deathMask;
     [SerializeField] public AudioClip audioSalto;
+    [Header("Player Components")]
+    [SerializeField] public PlayerStats playerStats;
 
     private Animator animator;
     private int saltosRestantes;
@@ -58,6 +60,7 @@ public class CharacterController : MonoBehaviour
         boxCollider = GetComponent<BoxCollider2D>();
         saltosRestantes = saltosMax;
         animator = GetComponent<Animator>();
+        if (!playerStats) playerStats = GetComponent<PlayerStats>();
 
     }
     // Update is called once per frame
@@ -228,7 +231,7 @@ public class CharacterController : MonoBehaviour
             return;
         }
 
-        GameManager.Instance.PerderVida(enemyHitBox.Damage);
+    if (playerStats) playerStats.TakeDamage(Mathf.RoundToInt(enemyHitBox.Damage));
         AplicarGolpe();
         if (sonidoAtacado && AudioManager.Instance)
             AudioManager.Instance.ReproducirSonido(sonidoAtacado);

@@ -29,34 +29,52 @@ public class InventoryUI : MonoBehaviour
 
     public void Refresh()
     {
-        if (!model || !gridRoot || !slotPrefab) return;
-        foreach (Transform child in gridRoot) Destroy(child.gameObject);
+        if (!model || !gridRoot || !slotPrefab)
+        {
+            Debug.LogWarning("InventoryUI: Faltan referencias (model/gridRoot/slotPrefab)");
+            return;
+        }
+        if (gridRoot.gameObject == slotPrefab)
+        {
+            Debug.LogError("InventoryUI: No asignes el slotPrefab en gridRoot. gridRoot debe ser el contenedor (Content) y slotPrefab un prefab de elemento.");
+            return;
+        }
+    foreach (Transform child in gridRoot) Destroy(child.gameObject);
 
         for (int i = 0; i < model.slots.Count; i++)
         {
             var s = model.slots[i];
             var go = Instantiate(slotPrefab, gridRoot);
-            // Buscar hijos por nombre: "icono" (Image) y "texto" (TMP)
+            // Buscar hijos por nombre: "icono" (Image), "texto" (TMP nombre) y opcional "cantidad" (TMP cantidad)
             Image icon = null;
             TextMeshProUGUI label = null;
+            TextMeshProUGUI countLabel = null;
             var iconT = go.transform.Find("icono");
             if (iconT) icon = iconT.GetComponent<Image>();
             var textT = go.transform.Find("texto");
             if (textT) label = textT.GetComponent<TextMeshProUGUI>();
+            var countT = go.transform.Find("cantidad");
+            if (countT) countLabel = countT.GetComponent<TextMeshProUGUI>();
 
             if (s.item != null)
             {
                 if (icon) { icon.enabled = true; icon.sprite = s.item.icon; }
-                if (label)
+                if (countLabel != null)
                 {
-                    // Mostrar nombre + cantidad si aplica
-                    label.text = s.count > 1 ? $"{s.item.displayName} x{s.count}" : s.item.displayName;
+                    if (label) label.text = s.item.displayName;
+                    countLabel.text = s.count > 1 ? $"x{s.count}" : string.Empty;
+                }
+                else
+                {
+                    // Fallback: sin campo "cantidad", mostrar nombre + cantidad en el mismo texto
+                    if (label) { label.text = s.count > 1 ? $"{s.item.displayName} x{s.count}" : s.item.displayName; }
                 }
             }
             else
             {
                 if (icon) { icon.enabled = false; icon.sprite = null; }
                 if (label) label.text = string.Empty;
+                if (countLabel) countLabel.text = string.Empty;
             }
 
             // Interacción con EventSystem

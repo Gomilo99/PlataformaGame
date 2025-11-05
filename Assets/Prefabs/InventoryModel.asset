@@ -14,75 +14,27 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   capacity: 12
   slots:
-  - item:
-      id: food
-      displayName: Manzana
-      icon: {fileID: 176453526, guid: 826f21ea1146a75459aa2d27d5ca30c4, type: 3}
-      maxStack: 99
+  - item: {fileID: 11400000, guid: b143515ded1b4224abd9be65ccb16e4a, type: 2}
     count: 1
-  - item:
-      id: food
-      displayName: Sushi
-      icon: {fileID: -221208891, guid: 826f21ea1146a75459aa2d27d5ca30c4, type: 3}
-      maxStack: 99
-    count: 2
-  - item:
-      id: food
-      displayName: Cerveza
-      icon: {fileID: 1820344326, guid: 826f21ea1146a75459aa2d27d5ca30c4, type: 3}
-      maxStack: 99
-    count: 2
-  - item:
-      id: 
-      displayName: 
-      icon: {fileID: 0}
-      maxStack: 99
+  - item: {fileID: 11400000, guid: 0eaa9af7dc37f3141b76e7ebea9d9d90, type: 2}
+    count: 3
+  - item: {fileID: 0}
     count: 0
-  - item:
-      id: 
-      displayName: 
-      icon: {fileID: 0}
-      maxStack: 99
+  - item: {fileID: 0}
     count: 0
-  - item:
-      id: 
-      displayName: 
-      icon: {fileID: 0}
-      maxStack: 99
+  - item: {fileID: 0}
     count: 0
-  - item:
-      id: 
-      displayName: 
-      icon: {fileID: 0}
-      maxStack: 99
+  - item: {fileID: 0}
     count: 0
-  - item:
-      id: 
-      displayName: 
-      icon: {fileID: 0}
-      maxStack: 99
+  - item: {fileID: 0}
     count: 0
-  - item:
-      id: 
-      displayName: 
-      icon: {fileID: 0}
-      maxStack: 99
+  - item: {fileID: 0}
     count: 0
-  - item:
-      id: 
-      displayName: 
-      icon: {fileID: 0}
-      maxStack: 99
+  - item: {fileID: 0}
     count: 0
-  - item:
-      id: 
-      displayName: 
-      icon: {fileID: 0}
-      maxStack: 99
+  - item: {fileID: 0}
     count: 0
-  - item:
-      id: 
-      displayName: 
-      icon: {fileID: 0}
-      maxStack: 99
+  - item: {fileID: 0}
+    count: 0
+  - item: {fileID: 0}
     count: 0

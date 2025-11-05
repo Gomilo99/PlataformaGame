@@ -26,6 +26,7 @@ public class HUD : MonoBehaviour
     public GameObject pausePanel;
     public GameObject winPanel;
     public GameObject deathPanel;
+    public GameObject inventoryPanel;
 
     // Ya no guardamos referencia al GameManager; usaremos GameManager.Instance directamente.
 
@@ -49,6 +50,10 @@ public class HUD : MonoBehaviour
         {
             Debug.LogWarning("HUD: No se ha asignado 'deathPanel' en el inspector.");
         }
+        if (!inventoryPanel)
+        {
+            Debug.LogWarning("HUD: No se ha asignado 'inventoryPanel' en el inspector.");
+        }
     }
 
     private void OnEnable()
@@ -64,7 +69,8 @@ public class HUD : MonoBehaviour
         // Progreso vía eventos de texto (x/y)
         EventBus<string>.Subscribe(GameEvent.CoinsProgressUpdated, HandleOnCoinsProgressUpdated);
         EventBus<string>.Subscribe(GameEvent.EnemiesProgressUpdated, HandleOnEnemiesProgressUpdated);
-
+        EventBus<bool>.Subscribe(GameEvent.InventoryOpened, HandleOnInventoryOpened);
+        EventBus<bool>.Subscribe(GameEvent.InventoryClosed, HandleOnInventoryClosed);
         // Inicializar textos con el estado actual si ya existe GameManager
         var gm = GameManager.Instance;
         RefreshTexts(); // contador de dinero
@@ -86,6 +92,8 @@ public class HUD : MonoBehaviour
         EventBus<bool>.Unsubscribe(GameEvent.PlayerDied, HandleOnPlayerDied);
         EventBus<string>.Unsubscribe(GameEvent.CoinsProgressUpdated, HandleOnCoinsProgressUpdated);
         EventBus<string>.Unsubscribe(GameEvent.EnemiesProgressUpdated, HandleOnEnemiesProgressUpdated);
+        EventBus<bool>.Unsubscribe(GameEvent.InventoryOpened, HandleOnInventoryOpened);
+        EventBus<bool>.Unsubscribe(GameEvent.InventoryClosed, HandleOnInventoryClosed);
     }
 
     private void HandleOnCoinCollected(int coinValue)
@@ -99,7 +107,16 @@ public class HUD : MonoBehaviour
         enemigosEliminados += count;
         RefreshTexts();
     }
-
+    private void HandleOnInventoryOpened(bool _)
+    {
+        inventoryPanel.SetActive(true);
+        uiElementsContainer.SetActive(false);
+    }
+    private void HandleOnInventoryClosed(bool _)
+    {
+        inventoryPanel.SetActive(false);
+        uiElementsContainer.SetActive(true);
+    }
     private void HandleOnGamePaused(bool _)
     {
         pausePanel.SetActive(true);

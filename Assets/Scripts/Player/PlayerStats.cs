@@ -10,12 +10,24 @@ public class PlayerStats : MonoBehaviour
     [Header("Equipo")]
     public ItemData equippedWeapon;
 
-    public System.Action OnStatsChanged;
-
     public int GetTotalAttack()
     {
         int weaponAtk = (equippedWeapon != null) ? equippedWeapon.weaponAttack : 0;
         return baseAttack + weaponAtk;
+    }
+
+    public void TakeDamage(int dmg)
+    {
+        currentHealth = Mathf.Clamp(currentHealth - Mathf.Max(0, dmg), 0, maxHealth);
+        EventBus<int>.Publish(GameEvent.HealthChanged, currentHealth);
+        EventBus<bool>.Publish(GameEvent.PlayerStatsChanged, true);
+    }
+
+    public void Heal(int amt)
+    {
+        currentHealth = Mathf.Clamp(currentHealth + Mathf.Max(0, amt), 0, maxHealth);
+        EventBus<int>.Publish(GameEvent.HealthChanged, currentHealth);
+        EventBus<bool>.Publish(GameEvent.PlayerStatsChanged, true);
     }
 
     public void ApplyConsumable(ItemData item)
@@ -25,22 +37,25 @@ public class PlayerStats : MonoBehaviour
         {
             case ConsumableKind.HealthDelta:
                 currentHealth = Mathf.Clamp(currentHealth + item.amount, 0, maxHealth);
+                EventBus<int>.Publish(GameEvent.HealthChanged, currentHealth);
                 break;
             case ConsumableKind.MaxHealthDelta:
                 maxHealth = Mathf.Max(1, maxHealth + item.amount);
                 currentHealth = Mathf.Clamp(currentHealth, 0, maxHealth);
+                EventBus<int>.Publish(GameEvent.HealthChanged, currentHealth);
                 break;
             case ConsumableKind.AttackDelta:
                 baseAttack = Mathf.Max(0, baseAttack + item.amount);
                 break;
         }
-        OnStatsChanged?.Invoke();
+        EventBus<bool>.Publish(GameEvent.PlayerStatsChanged, true);
     }
 
     public void EquipWeapon(ItemData weapon)
     {
         if (weapon == null || weapon.category != ItemCategory.Weapon) return;
         equippedWeapon = weapon;
-        OnStatsChanged?.Invoke();
+        EventBus<ItemData>.Publish(GameEvent.WeaponEquipped, equippedWeapon);
+        EventBus<bool>.Publish(GameEvent.PlayerStatsChanged, true);
     }
 }
